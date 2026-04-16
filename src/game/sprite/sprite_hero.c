@@ -16,44 +16,28 @@ static void _hero_del(struct sprite *sprite) {
  */
  
 static int _hero_init(struct sprite *sprite) {
+
+  //TODO Vehicle should be configured generically with a command.
+  sprite->vehicle=NS_vehicle_car;
+  sprite->grip=0.750;
+  sprite->topspeed=25.0; // 30 feels good. 40 is maybe too fast.
+
   return 0;
-}
-
-/* Gas is applied: move.
- * TODO This is obviously inadequate; there needs to be some continuation of movement after releasing gas.
- */
- 
-static void hero_move(struct sprite *sprite,double elapsed) {
-  const double speed=20.0; // m/s
-  double dx=sin(sprite->t)*speed*elapsed;
-  double dy=-cos(sprite->t)*speed*elapsed;
-  sprite->x+=dx;
-  sprite->y+=dy;
-}
-
-/* Turn, in response to dpad.
- * TODO For now, we're just rotating immediately, which is definitely not how cars work.
- */
- 
-static void hero_turn(struct sprite *sprite,double elapsed,int d) {
-  const double rate=5.0; // rad/s
-  sprite->t+=rate*elapsed*d;
-  if (sprite->t>M_PI) sprite->t-=M_PI*2.0;
-  else if (sprite->t<-M_PI) sprite->t+=M_PI*2.0;
 }
 
 /* Update.
  */
  
 static void _hero_update(struct sprite *sprite,double elapsed) {
-  //XXX temporary
-  // Turn?
   switch (g.input&(EGG_BTN_LEFT|EGG_BTN_RIGHT)) {
-    case EGG_BTN_LEFT: hero_turn(sprite,elapsed,-1); break;
-    case EGG_BTN_RIGHT: hero_turn(sprite,elapsed,1); break;
+    case EGG_BTN_LEFT: sprite->steer=-1; break;
+    case EGG_BTN_RIGHT: sprite->steer=1; break;
+    default: sprite->steer=0; break;
   }
-  // Move?
-  if (g.input&EGG_BTN_SOUTH) hero_move(sprite,elapsed);
+  if (g.input&EGG_BTN_WEST) sprite->gas=-1;
+  else if (g.input&EGG_BTN_SOUTH) sprite->gas=1;
+  else sprite->gas=0;
+  sprite_vehicle_update(sprite,elapsed);
 }
 
 /* Render.
@@ -74,3 +58,17 @@ const struct sprite_type sprite_type_hero={
   .update=_hero_update,
   //.render=_hero_render,
 };
+
+/* Public accessors.
+ */
+ 
+int sprite_hero_is_offroad(const struct sprite *sprite) {
+  if (!sprite||(sprite->type!=&sprite_type_hero)) return 0;
+  return 0;//return SPRITE->offroad;
+}
+
+
+double sprite_hero_get_speed(const struct sprite *sprite) {
+  if (!sprite||(sprite->type!=&sprite_type_hero)) return 0.0;
+  return 0.0;//return SPRITE->report_speed;
+}

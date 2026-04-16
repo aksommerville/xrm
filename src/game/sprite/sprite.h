@@ -35,6 +35,19 @@ struct sprite {
   const void *cmd; // Includes sprite resource header.
   int cmdc;
   uint8_t arg[4];
+  
+  // The model for moving vehicles is all here at the generic level, so in theory CPU-driven cars can share it.
+  // Controller sets these:
+  int vehicle; // Zero if not participating, or NS_vehicle_*. Constant.
+  double grip; // 0..1, essentially "how grippy are your tires?". Do not adjust per floor conditions; that will be done generically.
+  double topspeed; // m/s
+  int steer; // -1,0,1, current input state of dpad.
+  int gas; // -1,0,1 = brake,idle,gas. Input state.
+  // Internal use by vehicle:
+  double vx,vy; // m/s, actual velocity.
+  double drive; // m/s target forward.
+  int pvgas;
+  double gripbonus;
 };
 
 /* Only sprites_update() should call sprite_del(), and only sprite_spawn() should call sprite_new().
@@ -94,5 +107,16 @@ const struct sprite_type *sprite_type_from_res(const void *cmd,int cmdc);
 #define _(tag) extern const struct sprite_type sprite_type_##tag;
 FOR_EACH_SPRTYPE
 #undef _
+
+/* API for specific types.
+ ********************************************************************/
+ 
+int sprite_hero_is_offroad(const struct sprite *sprite);
+double sprite_hero_get_speed(const struct sprite *sprite);
+
+/* Physics and motors.
+ *********************************************************************/
+ 
+void sprite_vehicle_update(struct sprite *sprite,double elapsed);
 
 #endif

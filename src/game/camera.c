@@ -36,6 +36,14 @@ void camera_update(double elapsed) {
     else if (g.camerax>worldw-FBW) g.camerax=worldw-FBW;
     if (g.cameray<0) g.cameray=0;
     else if (g.cameray>worldh-FBH) g.cameray=worldh-FBH;
+    
+    // If the hero is riding offroad, bump up by a pixel periodically.
+    if (g.framec&8) {
+      if (sprite_hero_is_offroad(focus)&&(sprite_hero_get_speed(focus)>=1.0)) {
+        if (g.cameray) g.cameray-=2;
+        else g.cameray+=2;
+      }
+    }
   }
 }
 
@@ -43,6 +51,7 @@ void camera_update(double elapsed) {
  */
  
 void camera_render() {
+  g.framec++;
   
   // Map.
   graf_set_image(&g.graf,RID_image_terrain);

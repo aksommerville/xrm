@@ -31,6 +31,7 @@ extern struct g {
   
   // camera.c
   int camerax,cameray; // Top-left, in map pixels.
+  int framec;
   
   struct sprite **spritev;
   int spritec,spritea;

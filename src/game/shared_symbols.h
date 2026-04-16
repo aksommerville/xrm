@@ -35,6 +35,13 @@
 #define NS_physics_water 2
 #define NS_physics_overpass 3 /* Vacant above and below, but you can only pass on one axis. */
 #define NS_physics_bridge 4 /* Vacant above, water below. */
+#define NS_physics_bumpy 5 /* Effectively vacant, but cars get a speed penalty. */
+
+/* "vehicle" is the gross mode of operation, like what kind of tiles can we travel on.
+ */
+#define NS_vehicle_car     1 /* Travel on vacant, stopped by solid, splashes into water. */
+#define NS_vehicle_boat    2 /* Travel on water, all else stops. */
+#define NS_vehicle_chopper 3 /* Travel on vacant or water, stopped by solid. */
 
 // Editor uses the comment after a 'sprtype' symbol as a prompt in the new-sprite modal.
 // Should match everything after 'spriteid' in the CMD_map_sprite args.

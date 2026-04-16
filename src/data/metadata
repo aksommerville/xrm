@@ -1,0 +1,17 @@
+fb=320x320
+players=1
+lang=en
+title=Extreme Racing Machines
+title$=2
+author=AK Sommerville
+copyright=(c) 2026 AK Sommerville
+iconImage=1
+version=0.0.1
+time=2026-04-15
+incfgMask=dsw1
+incfgNames=3
+freedom=free
+genre=Racing
+contact=aksommerville@gmail.com
+homepage=https://aksommerville.itch.io/xrm
+source=https://github.com/aksommerville/xrm

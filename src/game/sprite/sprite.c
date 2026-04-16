@@ -69,7 +69,7 @@ struct sprite *sprite_new(
   if (argc>=4) memcpy(sprite->arg,arg,4);
   else memcpy(sprite->arg,arg,argc);
   sprite->layer=100;
-  sprite->radius=0.5;
+  sprite->radius=0.750;
   sprite->color=0x808080ff;
   
   if (sprite_apply_generic_commands(sprite,cmd,cmdc)<0) {
@@ -126,6 +126,7 @@ static int sprite_rendercmp(const void *a,const void *b) {
 void sprites_render(int camerax,int cameray) {
   qsort(g.spritev,g.spritec,sizeof(void*),sprite_rendercmp);
   graf_set_image(&g.graf,RID_image_sprites);
+  graf_set_filter(&g.graf,1);
   struct sprite **spritep=g.spritev;
   int i=g.spritec;
   for (;i-->0;spritep++) {
@@ -137,7 +138,7 @@ void sprites_render(int camerax,int cameray) {
       sprite->type->render(sprite,x,y);
     } else {
       int8_t rot=(int8_t)((sprite->t*128.0)/M_PI); // Careful! Must perform the cast signed or Wasm will clamp it.
-      graf_fancy(&g.graf,x,y,sprite->tileid,sprite->xform,rot,NS_sys_tilesize,sprite->tint,sprite->color);
+      graf_fancy(&g.graf,x,y,sprite->tileid,sprite->xform,rot,SPRITE_TILESIZE,sprite->tint,sprite->color);
     }
   }
 }

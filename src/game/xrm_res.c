@@ -92,6 +92,13 @@ int xrm_res_init() {
     }
   }
   
+  // There must be a map, and it must be at least as large as the framebuffer on both axes.
+  // Realistically, it is *much* bigger.
+  if ((g.mapw*NS_sys_tilesize<FBW)||(g.maph*NS_sys_tilesize<FBH)) {
+    fprintf(stderr,"!!! map:1 (%d,%d)m*%d is smaller than the framebuffer (%d,%d)px.\n",g.mapw,g.maph,NS_sys_tilesize,FBW,FBH);
+    return -2;
+  }
+  
   return 0;
 }
 

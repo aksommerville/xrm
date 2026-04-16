@@ -29,15 +29,21 @@ extern struct g {
   const void *mapcmd;
   int mapcmdc;
   
-  int camerax,cameray; // Center, in map pixels.
+  // camera.c
+  int camerax,cameray; // Top-left, in map pixels.
   
   struct sprite **spritev;
   int spritec,spritea;
   
 } g;
 
+// xrm_res.c
 int xrm_res_init();
 int xrm_res_search(int tid,int rid);
 int xrm_res_get(void *dstpp,int tid,int rid);
+
+// camera.c
+void camera_update(double elapsed); // Call after updating sprites. Finalizes (g.camerax,y).
+void camera_render(); // Overwrites entire framebuffer.
 
 #endif

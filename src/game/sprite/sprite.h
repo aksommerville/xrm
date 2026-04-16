@@ -11,6 +11,12 @@
 struct sprite;
 struct sprite_type;
 
+/* Sprites are drawn at 32 pixels and rendered at 24.
+ * The map's tile size is 16, and that is our reference, "the meter".
+ * So the default radius is 0.750.
+ */
+#define SPRITE_TILESIZE 24
+
 /* Generic instances.
  ******************************************************************************/
 
@@ -75,6 +81,7 @@ struct sprite_type {
   void (*update)(struct sprite *sprite,double elapsed);
   
   /* Must restore graf_set_image(&g.graf,RID_image_sprites) before returning.
+   * Also restore graf_set_filter(&g.graf,1).
    * (x,y) are the center of the sprite in framebuffer pixels.
    */
   void (*render)(struct sprite *sprite,int x,int y);

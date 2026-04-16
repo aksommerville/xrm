@@ -37,6 +37,12 @@ static int sprite_apply_generic_commands(struct sprite *sprite,const void *src,i
           sprite->radius=((cmd.arg[0]<<8)|cmd.arg[1])/(double)NS_sys_tilesize;
         } break;
         
+      case CMD_sprite_vehicle: {
+          sprite->vehicle=cmd.arg[0];
+          sprite->grip=0.500;//TODO
+          sprite->topspeed=20.0;//TODO
+        } break;
+        
       case CMD_sprite_color: {
           sprite->color=(cmd.arg[0]<<24)|(cmd.arg[1]<<16)|(cmd.arg[2]<<8)|cmd.arg[3];
         } break;

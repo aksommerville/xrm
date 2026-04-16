@@ -111,6 +111,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
     double sync_rate=sync_rate_lo*(1.0-grip)+sync_rate_hi*grip;
     sprite->vx+=(syncdx*sync_rate*elapsed)/syncdistance;
     sprite->vy+=(syncdy*sync_rate*elapsed)/syncdistance;
+    velocity=sqrt(sprite->vx*sprite->vx+sprite->vy*sprite->vy);
   }
   
   /* Apply velocity.
@@ -118,7 +119,48 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   sprite->x+=sprite->vx*elapsed;
   sprite->y+=sprite->vy*elapsed;
   
+  /* Clamp hard to the world's edge, and don't bounce or anything.
+   */
+  double worldw=g.mapw,worldh=g.maph;
+  if (sprite->x<sprite->radius) sprite->x=sprite->radius;
+  else if (sprite->x>worldw-sprite->radius) sprite->x=worldw-sprite->radius;
+  if (sprite->y<sprite->radius) sprite->y=sprite->radius;
+  else if (sprite->y>worldh-sprite->radius) sprite->y=worldh-sprite->radius;
+  
   /* Detect and resolve collisions.
    */
-  //TODO
+  uint32_t physicsmask=1<<NS_physics_solid;
+  switch (sprite->vehicle) {
+    case NS_vehicle_car: physicsmask|=1<<NS_physics_water; break;
+    case NS_vehicle_boat: physicsmask|=1<<NS_physics_vacant; break;
+  }
+  struct collision collision;
+  int panic=2;
+  while (panic-->0) {
+    if (sprite_find_collision(&collision,sprite,physicsmask)<=0) break;
+    double esclen=sqrt(collision.dx*collision.dx+collision.dy*collision.dy);
+    double proj=((sprite->vx*collision.dx)+(sprite->vy*collision.dy))/esclen;
+    proj*=1.500;
+    sprite->drive=0.0;
+    if (collision.other&&collision.other->vehicle) {
+      double ashare=0.500;//TODO Compare masses?
+      double bshare=1.0-ashare;
+      proj+=((collision.other->vx*collision.dx)+(collision.other->vy*collision.dy))/esclen;
+      sprite->x+=collision.dx*1.100*ashare;
+      sprite->y+=collision.dy*1.100*ashare;
+      sprite->vx-=(proj*collision.dx)/esclen;
+      sprite->vy-=(proj*collision.dy)/esclen;
+      collision.other->x-=collision.dx*1.100*bshare;
+      collision.other->y-=collision.dy*1.100*bshare;
+      collision.other->vx+=(proj*collision.dx)/esclen;
+      collision.other->vy+=(proj*collision.dy)/esclen;
+      collision.other->drive=0.0;
+      
+    } else {
+      sprite->x+=collision.dx*1.100;
+      sprite->y+=collision.dy*1.100;
+      sprite->vx-=(proj*collision.dx)/esclen;
+      sprite->vy-=(proj*collision.dy)/esclen;
+    }
+  }
 }

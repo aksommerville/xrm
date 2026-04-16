@@ -119,4 +119,18 @@ double sprite_hero_get_speed(const struct sprite *sprite);
  
 void sprite_vehicle_update(struct sprite *sprite,double elapsed);
 
+/* I'm hoping that one-collision-at-a-time will prove enough.
+ * This returns >0 if (sprite) is colliding with something, and optionally the escape vector.
+ * (physicsmask) is zero or more (1<<NS_physics_*), the cells that you can't pass through.
+ */
+struct collision {
+  struct sprite *other; // Null if against the map.
+  double dx,dy; // Move sprite by so much to escape.
+};
+int sprite_find_collision(
+  struct collision *collision,
+  struct sprite *sprite,
+  uint32_t physicsmask
+);
+
 #endif

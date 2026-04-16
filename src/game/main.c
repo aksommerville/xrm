@@ -28,6 +28,7 @@ int egg_client_init() {
   g.cameray=(g.maph*NS_sys_tilesize)>>1;
   
   if (!sprite_spawn_id(133.0,142.0,RID_sprite_hero,0,0)) return -1;
+  sprite_spawn_id(140.0,145.0,RID_sprite_greencar,0,0);
 
   //TODO
 

@@ -23,6 +23,7 @@
 #define CMD_sprite_type     0x22 /* u16:sprtype */
 #define CMD_sprite_layer    0x23 /* u16:layer */
 #define CMD_sprite_radius   0x24 /* u16:pixels */
+#define CMD_sprite_vehicle  0x25 /* u8:vehicle u8:TODO */
 #define CMD_sprite_color    0x40 /* u32:rgba */
 
 #define NS_tilesheet_physics 1
@@ -47,8 +48,10 @@
 // Should match everything after 'spriteid' in the CMD_map_sprite args.
 #define NS_sprtype_dummy 0 /* (u32)0 */
 #define NS_sprtype_hero 1
+#define NS_sprtype_civilian 2
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
-  _(hero)
+  _(hero) \
+  _(civilian)
 
 #endif

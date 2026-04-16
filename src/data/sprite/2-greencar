@@ -1,0 +1,4 @@
+type (u16:sprtype)civilian
+solid
+tile 0x10 0
+vehicle (u8:vehicle)car 0

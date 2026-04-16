@@ -9,6 +9,7 @@
 #include "util/text/text.h"
 #include "egg_res_toc.h"
 #include "shared_symbols.h"
+#include "sprite/sprite.h"
 
 #define FBW 320
 #define FBH 320
@@ -29,6 +30,9 @@ extern struct g {
   int mapcmdc;
   
   int camerax,cameray; // Center, in map pixels.
+  
+  struct sprite **spritev;
+  int spritec,spritea;
   
 } g;
 

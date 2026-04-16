@@ -8,4 +8,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 
 ## TODO
 
-
+- [x] Generic sprite framework.
+- [ ] Hero sprite. Same controller for all vehicles.
+- [ ] Generic physics.
+- [ ] Consider using 32-pixel sprites (while keeping map tiles at 16). Get the car more or less driving first, feel it out.

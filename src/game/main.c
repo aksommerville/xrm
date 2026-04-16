@@ -26,6 +26,8 @@ int egg_client_init() {
   
   g.camerax=(g.mapw*NS_sys_tilesize)>>1;
   g.cameray=(g.maph*NS_sys_tilesize)>>1;
+  
+  if (!sprite_spawn_id(133.0,142.0,RID_sprite_hero,0,0)) return -1;
 
   //TODO
 
@@ -38,7 +40,8 @@ int egg_client_init() {
 void egg_client_update(double elapsed) {
   g.pvinput=g.input;
   g.input=egg_input_get_one(0);
-  const int speed=2;
+  
+  const int speed=2;//XXX
   switch (g.input&(EGG_BTN_LEFT|EGG_BTN_RIGHT)) {
     case EGG_BTN_LEFT: g.camerax-=speed; break;
     case EGG_BTN_RIGHT: g.camerax+=speed; break;
@@ -47,6 +50,8 @@ void egg_client_update(double elapsed) {
     case EGG_BTN_UP: g.cameray-=speed; break;
     case EGG_BTN_DOWN: g.cameray+=speed; break;
   }
+  
+  sprites_update(elapsed);
   //TODO
 }
 
@@ -76,6 +81,7 @@ void egg_client_render() {
       }
     }
   }
+  sprites_render(camerax,cameray);
   
   //TODO
   graf_flush(&g.graf);

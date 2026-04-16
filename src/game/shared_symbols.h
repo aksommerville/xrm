@@ -17,9 +17,13 @@
 #define CMD_map_sprite    0x61 /* u16:position, u16:spriteid, u32:arg */
 #define CMD_map_door      0x62 /* u16:position, u16:mapid, u16:dstposition, u16:arg */
 
-#define CMD_sprite_image 0x20 /* u16:imageid */
-#define CMD_sprite_tile  0x21 /* u8:tileid, u8:xform */
-#define CMD_sprite_type  0x22 /* u16:sprtype */
+#define CMD_sprite_solid    0x01 /* --- */
+#define CMD_sprite_image    0x20 /* u16:imageid ; We don't use, only the editor does. */
+#define CMD_sprite_tile     0x21 /* u8:tileid, u8:xform */
+#define CMD_sprite_type     0x22 /* u16:sprtype */
+#define CMD_sprite_layer    0x23 /* u16:layer */
+#define CMD_sprite_radius   0x24 /* u16:pixels */
+#define CMD_sprite_color    0x40 /* u32:rgba */
 
 #define NS_tilesheet_physics 1
 #define NS_tilesheet_family 0
@@ -35,7 +39,9 @@
 // Editor uses the comment after a 'sprtype' symbol as a prompt in the new-sprite modal.
 // Should match everything after 'spriteid' in the CMD_map_sprite args.
 #define NS_sprtype_dummy 0 /* (u32)0 */
+#define NS_sprtype_hero 1
 #define FOR_EACH_SPRTYPE \
-  _(dummy)
+  _(dummy) \
+  _(hero)
 
 #endif

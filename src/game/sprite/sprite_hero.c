@@ -2,6 +2,7 @@
 
 struct sprite_hero {
   struct sprite hdr;
+  double bladet; // For chopper.
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -16,12 +17,7 @@ static void _hero_del(struct sprite *sprite) {
  */
  
 static int _hero_init(struct sprite *sprite) {
-
-  //TODO Vehicle should be configured generically with a command.
-  sprite->vehicle=NS_vehicle_car;
-  sprite->grip=0.750;
-  sprite->topspeed=25.0; // 30 feels good. 40 is maybe too fast.
-
+  vehicle_acquire_config(sprite);
   return 0;
 }
 
@@ -29,6 +25,14 @@ static int _hero_init(struct sprite *sprite) {
  */
  
 static void _hero_update(struct sprite *sprite,double elapsed) {
+
+  if (sprite->vehicle==NS_vehicle_chopper) {
+    double dt=sprite->drive/sprite->topspeed;
+    dt=dt*20.0+(1.0-dt)*4.0;
+    SPRITE->bladet+=dt*elapsed;
+    if (SPRITE->bladet>M_PI) SPRITE->bladet-=M_PI*2.0;
+  }
+
   switch (g.input&(EGG_BTN_LEFT|EGG_BTN_RIGHT)) {
     case EGG_BTN_LEFT: sprite->steer=-1; break;
     case EGG_BTN_RIGHT: sprite->steer=1; break;
@@ -44,7 +48,19 @@ static void _hero_update(struct sprite *sprite,double elapsed) {
  */
  
 static void _hero_render(struct sprite *sprite,int x,int y) {
-  //TODO currently unused
+  int8_t rot=(int8_t)((sprite->t*128.0)/M_PI); // Careful! Must perform the cast signed or Wasm will clamp it.
+  graf_fancy(&g.graf,x,y,sprite->tileid,sprite->xform,rot,SPRITE_TILESIZE,sprite->tint,sprite->color);
+  switch (sprite->vehicle) {
+    case NS_vehicle_boat: {
+        //TODO motor and wake
+      } break;
+    case NS_vehicle_chopper: {
+        int bladex=x+lround(sin(sprite->t)*5.0);
+        int bladey=y-lround(cos(sprite->t)*5.0);
+        int bladerot=(int8_t)((SPRITE->bladet*128.0)/M_PI);
+        graf_fancy(&g.graf,bladex,bladey,sprite->tileid+1,0,bladerot,SPRITE_TILESIZE,sprite->tint,sprite->color);
+      } break;
+  }
 }
 
 /* Type definition.
@@ -56,19 +72,5 @@ const struct sprite_type sprite_type_hero={
   .del=_hero_del,
   .init=_hero_init,
   .update=_hero_update,
-  //.render=_hero_render,
+  .render=_hero_render,
 };
-
-/* Public accessors.
- */
- 
-int sprite_hero_is_offroad(const struct sprite *sprite) {
-  if (!sprite||(sprite->type!=&sprite_type_hero)) return 0;
-  return 0;//return SPRITE->offroad;
-}
-
-
-double sprite_hero_get_speed(const struct sprite *sprite) {
-  if (!sprite||(sprite->type!=&sprite_type_hero)) return 0.0;
-  return 0.0;//return SPRITE->report_speed;
-}

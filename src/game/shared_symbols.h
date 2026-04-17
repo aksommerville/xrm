@@ -27,6 +27,10 @@
 #define CMD_sprite_vehicle  0x25 /* u8:vehicle u8:TODO */
 #define CMD_sprite_color    0x40 /* u32:rgba */
 
+#define CMD_race_herosprite     0x20 /* u16:spriteid */
+#define CMD_race_orient         0x21 /* u8:dir(0x40,0x10,0x08,0x02) u8:reserved ; direction cars should face at start */
+#define CMD_race_laps           0x22 /* u8:count u8:reserved */
+
 #define NS_tilesheet_physics 1
 #define NS_tilesheet_family 0
 #define NS_tilesheet_neighbors 0

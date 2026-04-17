@@ -43,6 +43,7 @@ extern struct g {
   int checkpointc;
   double racetime;
   double countdown; // >0 when the race is ready but not started yet.
+  int lapc;
   
   struct sprite **spritev;
   int spritec,spritea;

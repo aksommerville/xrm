@@ -1,5 +1,27 @@
 #include "game/xrm.h"
 
+/* Configure sprite.
+ */
+ 
+int vehicle_acquire_config(struct sprite *sprite) {
+
+  //TODO
+  sprite->grip=0.750;
+  sprite->topspeed=25.0; // 30 feels good. 40 is maybe too fast.
+  
+  struct cmdlist_reader reader;
+  if (sprite_reader_init(&reader,sprite->cmd,sprite->cmdc)<0) return -1;
+  struct cmdlist_entry cmd;
+  while (cmdlist_reader_next(&cmd,&reader)>0) {
+    switch (cmd.opcode) {
+      case CMD_sprite_vehicle: {
+          sprite->vehicle=cmd.arg[0];
+        } break;
+    }
+  }
+  return 0;
+}
+
 /* Check position.
  * Update checkpoints etc.
  */
@@ -170,7 +192,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   uint32_t physicsmask=1<<NS_physics_solid;
   switch (sprite->vehicle) {
     case NS_vehicle_car: physicsmask|=1<<NS_physics_water; break;
-    case NS_vehicle_boat: physicsmask|=1<<NS_physics_vacant; break;
+    case NS_vehicle_boat: physicsmask|=(1<<NS_physics_vacant)|(1<<NS_physics_bumpy); break;
   }
   struct collision collision;
   int panic=2;

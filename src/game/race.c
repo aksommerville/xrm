@@ -17,8 +17,38 @@ int race_begin(int raceid) {
   memset(g.checkpointv,0,sizeof(g.checkpointv)); // We're going to populate sparsely.
   g.racetime=0.0;
   g.countdown=COUNTDOWN_TIME;
+  g.lapc=1;
   sprites_defunct_all();
   memcpy(g.map,g.mapro,g.mapw*g.maph);
+  
+  /* Get the race metadata resource and load it into globals.
+   * And some things are transient, we only need them during race_begin().
+   */
+  uint8_t orient=0x40;
+  int hero_spriteid=RID_sprite_hero;
+  {
+    const void *serial=0;
+    int serialc=xrm_res_get(&serial,EGG_TID_race,raceid);
+    if (serialc<1) {
+      fprintf(stderr,"race:%d not found\n",raceid);
+      return -1;
+    }
+    struct cmdlist_reader reader={.v=serial,.c=serialc};
+    struct cmdlist_entry cmd;
+    while (cmdlist_reader_next(&cmd,&reader)>0) {
+      switch (cmd.opcode) {
+        case CMD_race_herosprite: {
+            hero_spriteid=(cmd.arg[0]<<8)|cmd.arg[1];
+          } break;
+        case CMD_race_orient: {
+            orient=cmd.arg[0];
+          } break;
+        case CMD_race_laps: {
+            g.lapc=cmd.arg[0];
+          } break;
+      }
+    }
+  }
   
   /* Scan the map for checkpoint and block commands, apply them.
    */
@@ -49,8 +79,17 @@ int race_begin(int raceid) {
           int y=cmd.arg[1];
           if ((x>=g.mapw)||(y>=g.maph)) break; // oy!
           int p=y*g.mapw+x;
-          if ((g.mapro[p]<4)||((g.mapro[p]>=0x50)&&(g.mapro[p]<0x54))) g.map[p]=0x54; // Asphalt.
-          else g.map[p]=0x55; // Assume sidewalk.
+          if ((g.mapro[p]<4)||((g.mapro[p]>=0x50)&&(g.mapro[p]<0x54))) { // Asphalt.
+            g.map[p]=0x54;
+          } else if (
+            ((g.mapro[p]>=0x15)&&(g.mapro[p]<=0x19))||
+            ((g.mapro[p]>=0x25)&&(g.mapro[p]<=0x29))||
+            ((g.mapro[p]>=0x35)&&(g.mapro[p]<=0x39))
+          ) { // Water.
+            g.map[p]=g.mapro[p]+5;
+          } else { // Assume sidewalk.
+            g.map[p]=0x55;
+          }
         } break;
     }
   }
@@ -74,15 +113,16 @@ int race_begin(int raceid) {
   
   /* Generate vehicles at the starting grid, ie checkpoint zero.
    * TODO CPU and multiplayer vehicles. For now, making just one.
-   * TODO Declare vehicle type per race. For now, assuming car.
-   * TODO Initial orientation. They're UP by default, but we need to declare per race.
    */
   cp=g.checkpointv;
-  struct sprite *sprite=sprite_spawn_id(cp->x+cp->w*0.5,cp->y+cp->h*0.5,RID_sprite_hero,0,0);
+  struct sprite *sprite=sprite_spawn_id(cp->x+cp->w*0.5,cp->y+cp->h*0.5,hero_spriteid,0,0);
   if (!sprite) return -1;
-  sprite->t=M_PI*0.5;//XXX This needs to be generically declared by the race. For now, my scratch race starts Rightward.
-  
-  //TODO Schedule count-in.
+  switch (orient) {
+    case 0x40: break; // Natural orientation is Up.
+    case 0x10: sprite->t=M_PI*-0.5; break;
+    case 0x08: sprite->t=M_PI*0.5; break;
+    case 0x02: sprite->t=M_PI; break;
+  }
   
   return 0;
 }
@@ -126,16 +166,19 @@ void race_update(double elapsed) {
    * In the vanishingly unlikely case that two vehicles cross on the same frame, we use whichever we find first.
    * (sprite->lapid) is one-based.
    */
-  int lapc=2;//TODO
   struct sprite **spritep=g.spritev;
   int i=g.spritec;
   for (;i-->0;spritep++) {
     struct sprite *sprite=*spritep;
     if (sprite->defunct) continue;
     if (!sprite->vehicle) continue;
-    if (sprite->lapid>lapc) {
+    if (sprite->lapid>g.lapc) {
       fprintf(stderr,"!!! Race completed in %.03f s !!!\n",g.racetime);
-      race_begin(1);
+      /* TODO Ultimately, completing a race should first enter a cooldown period, then return to the menu or whatever, how they started it.
+       * For now, run them all sequentially. You can set the first raceid in main.c:egg_client_init().
+       */
+      if (g.raceid==3) race_begin(1);
+      else race_begin(g.raceid+1);
     }
   }
 }

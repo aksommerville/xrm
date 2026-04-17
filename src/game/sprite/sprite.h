@@ -118,11 +118,12 @@ FOR_EACH_SPRTYPE
 /* API for specific types.
  ********************************************************************/
  
-int sprite_hero_is_offroad(const struct sprite *sprite);
-double sprite_hero_get_speed(const struct sprite *sprite);
-
 /* Physics and motors.
  *********************************************************************/
+ 
+/* Read (sprite->cmd) and apply the vehicle-specific things.
+ */
+int vehicle_acquire_config(struct sprite *sprite);
  
 void sprite_vehicle_update(struct sprite *sprite,double elapsed);
 

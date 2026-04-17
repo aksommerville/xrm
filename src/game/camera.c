@@ -76,4 +76,46 @@ void camera_render() {
   sprites_render(g.camerax,g.cameray);
   
   //TODO Overlay? Clock, HP, score, ...?
+  
+  /* Countdown, if running.
+   */
+  if (g.countdown>0.0) {
+    int ms=(int)(g.countdown*1000.0);
+    int sec=(ms+999)/1000;
+    if (sec>5) {
+      sec=5;
+      ms=999;
+    } else if (sec<1) {
+      sec=1;
+      ms=0;
+    } else {
+      ms%=1000;
+    }
+    graf_set_image(&g.graf,RID_image_chunks);
+    //void graf_decal_rotate(struct graf *graf,int dstx,int dsty,int srcx,int srcy,int w_and_h,double sint,double cost,double scale);
+    double scale=0.250+(2.000*ms)/1000.0;
+    int alpha=(ms*255)/1000;
+    if (alpha>0xff) alpha=0xff; else if (alpha<1) alpha=1;
+    graf_set_alpha(&g.graf,alpha);
+    int srcx=(5-sec)*48;
+    graf_decal_rotate(&g.graf,FBW>>1,FBH>>1,srcx,0,48,0.0,1.0,scale);
+    graf_set_alpha(&g.graf,0xff);
+    
+  /* Right after the countdown completes, say "GO!" for a little bit.
+   */
+  } else if (g.racetime<2.000) {
+    int frame=(int)(g.racetime*15.0)&3;
+    int srcx=48*frame;
+    int srcy=48;
+    double p=sin(g.racetime*20.0); // Higher means faster wobble.
+    double t=p*0.250; // TODO extent of wobble, in radians
+    if (g.racetime>1.5) {
+      int alpha=(int)((2.0-g.racetime)*512.0);
+      if (alpha<1) alpha=1; else if (alpha>0xff) alpha=0xff;
+      graf_set_alpha(&g.graf,alpha);
+    }
+    graf_set_image(&g.graf,RID_image_chunks);
+    graf_decal_rotate(&g.graf,FBW>>1,(FBH>>1)-16,srcx,srcy,48,sin(t),cos(t),1.0);
+    graf_set_alpha(&g.graf,0xff);
+  }
 }

@@ -43,8 +43,13 @@ struct sprite {
   double topspeed; // m/s
   int steer; // -1,0,1, current input state of dpad.
   int gas; // -1,0,1 = brake,idle,gas. Input state.
-  // Internal use by vehicle:
+  // Used internally but might be interesting to read:
   double vx,vy; // m/s, actual velocity.
+  int next_checkpoint;
+  int lapid; // Initialize to zero and it should immediately bump to 1. One-based, for business purposes.
+  double lapstarttime; // Sampled from (g.racetime).
+  int qx,qy; // Quantized position.
+  // Vehicle internal use:
   double drive; // m/s target forward.
   int pvgas;
   double gripbonus;
@@ -81,6 +86,8 @@ struct sprite *sprite_spawn_id(
   int rid,
   const void *arg,int argc
 );
+
+void sprites_defunct_all();
 
 /* Types.
  ***********************************************************************/

@@ -8,18 +8,22 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 
 ## TODO
 
-- [x] Generic sprite framework.
-- [ ] Hero sprite. Same controller for all vehicles.
-- [ ] Generic physics.
-- [x] Consider using 32-pixel sprites (while keeping map tiles at 16). Get the car more or less driving first, feel it out. ...yes 32.
+- Important and urgent.
+- [ ] Structured races.
+- [ ] CPU driver.
 - [ ] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
 - [ ] Boat and chopper.
 - [ ] Overpass and bridge. If it proves too hairy, we can do moveable bridges instead. Open when you pick the boat, close otherwise, easy.
-- [ ] CPU driver.
-- [ ] Structured races.
-- [ ] Scorekeeping.
 - [ ] Music.
 - [ ] Incidental sound effects.
+- [ ] Scorekeeping.
+- [ ] Show time, speed, etc in a overlay.
+- [x] Count down to start race.
+
+- Stretch goals.
+- [ ] High and low gear? I guess it would just set a lower top speed, in low gear. Might be helpful in narrow streets?
 - [ ] Motor and screech effects, maybe with synth events instead of sounds?
 - [ ] Modals.
-- [ ] 2-player mode.
+- [ ] 2-player mode. Or why not more?
+- [ ] Non-racing challenges. Push a thing, demolish a car, weave around the cones, race with gas stuck on.
+- [ ] Free play mode. Side quests, combat, dialogue?

@@ -190,6 +190,15 @@ struct sprite *sprite_spawn_id(
   return sprite_spawn(x,y,type,arg,argc,cmd,cmdc);
 }
 
+/* Mark all sprites defunct.
+ */
+ 
+void sprites_defunct_all() {
+  struct sprite **p=g.spritev;
+  int i=g.spritec;
+  for (;i-->0;p++) (*p)->defunct=1;
+}
+
 /* Type registry.
  */
  

@@ -1,9 +1,45 @@
 #include "game/xrm.h"
 
+/* Check position.
+ * Update checkpoints etc.
+ */
+ 
+static void vehicle_check_position(struct sprite *sprite,double elapsed) {
+  int qx=(int)sprite->x;
+  int qy=(int)sprite->y;
+  if ((qx!=sprite->qx)||(qy!=sprite->qy)) {
+    sprite->qx=qx;
+    sprite->qy=qy;
+    int cpid=race_check_checkpoint_at_point(qx,qy);
+    if ((cpid>=0)&&(cpid==sprite->next_checkpoint)) {
+      fprintf(stderr,"%p CHECKPOINT %d at %d,%d\n",sprite,cpid,qx,qy);
+      sprite->next_checkpoint++;
+      if (sprite->next_checkpoint>=g.checkpointc) {
+        sprite->next_checkpoint=0;
+      } else if (sprite->next_checkpoint==1) { // Just crossed the finish line.
+        if (sprite->lapid) fprintf(stderr,"%p LAP %d TIME %.03f\n",sprite,sprite->lapid,g.racetime-sprite->lapstarttime);
+        sprite->lapid++;
+        fprintf(stderr,"%p BEGIN LAP %d\n",sprite,sprite->lapid);
+        //TODO Record and report lap time, and check for race completion.
+        sprite->lapstarttime=g.racetime;
+      }
+    }
+  }
+}
+
 /* Update vehicle.
  */
  
 void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
+
+  /* No playing during the countdown.
+   * TODO Maybe we do want to allow them to rev the engine or turn?
+   * TODO Maybe a Mario Kart style boost if you start your engine at the right moment, and spin out if you hit it early?
+   */
+  if (g.countdown>0.0) {
+    vehicle_check_position(sprite,elapsed);
+    return;
+  }
 
   //TODO Constants that might need extracted for config.
   double steer_rate=4.000; // rad/s
@@ -15,7 +51,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   double sync_rate_hi=100.0; // m/s**2. Maximum rate of acceleration or deceleration.
   double sync_rate_lo=  2.0; // ...according to (grip).
   double bumpy_grip_penalty=0.500; // Grip multiplier.
-  double bumpy_speed_penalty=0.500; // Topspeed multiplier.
+  double bumpy_speed_penalty=0.666; // Topspeed multiplier.
 
   /* Direction adjusts naively according to dpad.
    */
@@ -75,8 +111,10 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   }
   
   /* If velocity is below some hair-splitty threshold and gas not applied, get out.
+   * Do still perform all the positional checks.
    */
   if ((sprite->gas<=0)&&(velocity<1.0)) {
+    vehicle_check_position(sprite,elapsed);
     return;
   }
   
@@ -163,4 +201,6 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
       sprite->vy-=(proj*collision.dy)/esclen;
     }
   }
+  
+  vehicle_check_position(sprite,elapsed);
 }

@@ -27,10 +27,13 @@ int egg_client_init() {
   g.camerax=(g.mapw*NS_sys_tilesize)>>1;//XXX
   g.cameray=(g.maph*NS_sys_tilesize)>>1;
   
+  /*XXX
   if (!sprite_spawn_id(133.0,142.0,RID_sprite_hero,0,0)) return -1;
   sprite_spawn_id(140.0,145.0,RID_sprite_greencar,0,0);
+  /**/
 
   //TODO
+  if (race_begin(1)<0) return -1;
 
   return 0;
 }
@@ -43,6 +46,7 @@ void egg_client_update(double elapsed) {
   g.input=egg_input_get_one(0);
   sprites_update(elapsed);
   camera_update(elapsed);
+  race_update(elapsed);
 }
 
 /* Render.

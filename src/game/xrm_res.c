@@ -4,13 +4,19 @@
  */
  
 static int xrm_load_map(const void *src,int srcc) {
+  if (g.map) {
+    fprintf(stderr,"!!! Multiple maps.\n");
+    return -2;
+  }
   struct map_res res;
   if (map_res_decode(&res,src,srcc)<0) return -1;
   g.mapw=res.w;
   g.maph=res.h;
-  g.map=res.v;
+  g.mapro=res.v;
   g.mapcmd=res.cmd;
   g.mapcmdc=res.cmdc;
+  if (!(g.map=malloc(g.mapw*g.maph))) return -1;
+  memcpy(g.map,g.mapro,g.mapw*g.maph);
   return 0;
 }
 
@@ -94,7 +100,7 @@ int xrm_res_init() {
   
   // There must be a map, and it must be at least as large as the framebuffer on both axes.
   // Realistically, it is *much* bigger.
-  if ((g.mapw*NS_sys_tilesize<FBW)||(g.maph*NS_sys_tilesize<FBH)) {
+  if ((g.mapw*NS_sys_tilesize<FBW)||(g.maph*NS_sys_tilesize<FBH)||!g.map) {
     fprintf(stderr,"!!! map:1 (%d,%d)m*%d is smaller than the framebuffer (%d,%d)px.\n",g.mapw,g.maph,NS_sys_tilesize,FBW,FBH);
     return -2;
   }

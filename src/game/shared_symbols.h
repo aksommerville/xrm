@@ -30,6 +30,7 @@
 #define CMD_race_herosprite     0x20 /* u16:spriteid */
 #define CMD_race_orient         0x21 /* u8:dir(0x40,0x10,0x08,0x02) u8:reserved ; direction cars should face at start */
 #define CMD_race_laps           0x22 /* u8:count u8:reserved */
+#define CMD_race_cpusprite      0x23 /* u16:spriteid */
 
 #define NS_tilesheet_physics 1
 #define NS_tilesheet_family 0
@@ -54,9 +55,11 @@
 #define NS_sprtype_dummy 0 /* (u32)0 */
 #define NS_sprtype_hero 1
 #define NS_sprtype_civilian 2
+#define NS_sprtype_autopilot 3
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
   _(hero) \
-  _(civilian)
+  _(civilian) \
+  _(autopilot)
 
 #endif

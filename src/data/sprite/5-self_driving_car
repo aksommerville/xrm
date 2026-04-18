@@ -1,0 +1,5 @@
+image image:sprites
+type (u16:sprtype)autopilot
+tile 0x00 0x00
+solid
+vehicle (u8:vehicle)car 0

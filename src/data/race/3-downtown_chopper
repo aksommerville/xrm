@@ -1,3 +1,4 @@
 herosprite sprite:herocopter
+cpusprite sprite:self_driving_chopper
 orient 0x10 0
 laps 2 0

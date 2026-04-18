@@ -8,14 +8,16 @@
  */
  
 static struct sprite *camera_find_focus() {
+  struct sprite *fallback=0;
   struct sprite **spritep=g.spritev;
   int i=g.spritec;
   for (;i-->0;spritep++) {
     struct sprite *sprite=*spritep;
     if (sprite->defunct) continue;
     if (sprite->type==&sprite_type_hero) return sprite;
+    if (sprite->type==&sprite_type_autopilot) fallback=sprite;
   }
-  return 0;
+  return fallback;
 }
 
 /* Update.

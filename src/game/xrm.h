@@ -44,6 +44,8 @@ extern struct g {
   double racetime;
   double countdown; // >0 when the race is ready but not started yet.
   int lapc;
+  struct plan { double x,y; } *planv; // The path for autopilots. Initial position is at the end, start by targetting [0].
+  int planc,plana;
   
   struct sprite **spritev;
   int spritec,spritea;
@@ -63,5 +65,13 @@ void camera_render(); // Overwrites entire framebuffer.
 int race_begin(int raceid);
 int race_check_checkpoint_at_point(int x,int y); // => index in (g.checkpointv), or <0
 void race_update(double elapsed);
+
+/* With the map and race loaded except sprites, examine map and generate the plan for autopilots.
+ * You must tell us what kind of vehicle we're planning for, since they all treat cell physics differently.
+ * Paths are weighed based on turn count, not length. So if you see autopilots turning around unexpected, add more checkpoints around the twisty parts.
+ * The plan, and autopilot's execution of it, are both decidedly suboptimal. That's good tho: We want the human to win without working too hard for it.
+ * plangen.c
+ */
+int vehicle_prepare_plan(int vehicle);
 
 #endif

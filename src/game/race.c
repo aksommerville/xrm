@@ -18,6 +18,7 @@ int race_begin(int raceid) {
   g.racetime=0.0;
   g.countdown=COUNTDOWN_TIME;
   g.lapc=1;
+  g.planc=0;
   sprites_defunct_all();
   memcpy(g.map,g.mapro,g.mapw*g.maph);
   
@@ -26,6 +27,7 @@ int race_begin(int raceid) {
    */
   uint8_t orient=0x40;
   int hero_spriteid=RID_sprite_hero;
+  int cpu_spriteid=RID_sprite_self_driving_car;
   {
     const void *serial=0;
     int serialc=xrm_res_get(&serial,EGG_TID_race,raceid);
@@ -45,6 +47,9 @@ int race_begin(int raceid) {
           } break;
         case CMD_race_laps: {
             g.lapc=cmd.arg[0];
+          } break;
+        case CMD_race_cpusprite: {
+            cpu_spriteid=(cmd.arg[0]<<8)|cmd.arg[1];
           } break;
       }
     }
@@ -112,16 +117,32 @@ int race_begin(int raceid) {
   }
   
   /* Generate vehicles at the starting grid, ie checkpoint zero.
-   * TODO CPU and multiplayer vehicles. For now, making just one.
+   * TODO For now, assume there's always a hero vehicle and a cpu vehicle and make one of each.
    */
   cp=g.checkpointv;
-  struct sprite *sprite=sprite_spawn_id(cp->x+cp->w*0.5,cp->y+cp->h*0.5,hero_spriteid,0,0);
-  if (!sprite) return -1;
+  double midx=cp->x+cp->w*0.5;
+  double midy=cp->y+cp->h*0.5;
+  struct sprite *hero=0,*cpu=0;
+  if (orient&0x42) { // Starting up or down, hero goes on the left.
+    hero=sprite_spawn_id(midx-1.0,midy,hero_spriteid,0,0);
+    cpu=sprite_spawn_id(midx+1.0,midy,cpu_spriteid,0,0);
+  } else { // Starting left or right, hero goes on the top.
+    hero=sprite_spawn_id(midx,midy-1.0,hero_spriteid,0,0);
+    cpu=sprite_spawn_id(midx,midy+1.0,cpu_spriteid,0,0);
+  }
+  if (!hero||!cpu) return -1;
   switch (orient) {
-    case 0x40: break; // Natural orientation is Up.
-    case 0x10: sprite->t=M_PI*-0.5; break;
-    case 0x08: sprite->t=M_PI*0.5; break;
-    case 0x02: sprite->t=M_PI; break;
+    case 0x40: break; // Natural orientation is Up for all vehicle sprites.
+    case 0x10: hero->t=cpu->t=M_PI*-0.5; break;
+    case 0x08: hero->t=cpu->t=M_PI*0.5; break;
+    case 0x02: hero->t=cpu->t=M_PI; break;
+  }
+  
+  /* Prepare autopilot plan.
+   */
+  if (vehicle_prepare_plan(hero->vehicle)<0) {
+    fprintf(stderr,"vehicle_prepare_plan failed at race:%d, vehicle=%d\n",raceid,hero->vehicle);
+    return -1;
   }
   
   return 0;

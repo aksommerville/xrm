@@ -13,8 +13,9 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [x] CPU driver.
 - [ ] When cars bonk each and travelling the same direction, there can be a ridiculous amount of force. Tone it down.
 - [ ] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
+- - Redesign the world map altogether, now that we understand the rules better.
 - [x] Boat and chopper.
-- [ ] Overpass and bridge. If it proves too hairy, we can do moveable bridges instead. Open when you pick the boat, close otherwise, easy.
+- [x] Overpass and bridge. If it proves too hairy, we can do moveable bridges instead. Open when you pick the boat, close otherwise, easy. ...XXX too much trouble.
 - [ ] Music.
 - [ ] Incidental sound effects.
 - [ ] Scorekeeping.
@@ -25,13 +26,15 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [ ] Different appearance for CPU player.
 - [ ] Move more vehicle config out to the sprite resource, and tune all the vehicles appropriately.
 - [ ] I think tone down the wall penalty.
+- [ ] CPU players are getting stuck sometimes, esp in south_sea. Can we add some kind of mitigation? Similar: Can we prevent them from grinding into walls?
 
 - Stretch goals.
+- [ ] Show current rank. Not as simple as it sounds.
 - [ ] Boat: Animated motor.
 - [ ] Boat: visible wake. Maybe trailing long behind the sprite, so not part of the sprite itself.
 - [ ] High and low gear? I guess it would just set a lower top speed, in low gear. Might be helpful in narrow streets?
 - [ ] Motor and screech effects, maybe with synth events instead of sounds?
 - [ ] Modals.
 - [ ] 2-player mode. Or why not more?
-- [ ] Non-racing challenges. Push a thing, demolish a car, weave around the cones, race with gas stuck on.
-- [ ] Free play mode. Side quests, combat, dialogue?
+- [x] Non-racing challenges. Push a thing, demolish a car, weave around the cones, race with gas stuck on. ...XXX too much trouble.
+- [x] Free play mode. Side quests, combat, dialogue? ...XXX too much trouble.

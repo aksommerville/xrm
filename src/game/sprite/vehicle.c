@@ -8,6 +8,7 @@ int vehicle_acquire_config(struct sprite *sprite) {
   //TODO
   sprite->grip=0.750;
   sprite->topspeed=25.0; // 30 feels good. 40 is maybe too fast.
+  if (sprite->type==&sprite_type_autopilot) sprite->topspeed=30.0;
   
   struct cmdlist_reader reader;
   if (sprite_reader_init(&reader,sprite->cmd,sprite->cmdc)<0) return -1;

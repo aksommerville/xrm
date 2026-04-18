@@ -122,21 +122,29 @@ int race_begin(int raceid) {
   cp=g.checkpointv;
   double midx=cp->x+cp->w*0.5;
   double midy=cp->y+cp->h*0.5;
-  struct sprite *hero=0,*cpu=0;
+  struct sprite *hero=0,*cpu=0,*cpu2=0,*cpu3=0;
   if (orient&0x42) { // Starting up or down, hero goes on the left.
     hero=sprite_spawn_id(midx-1.0,midy,hero_spriteid,0,0);
     cpu=sprite_spawn_id(midx+1.0,midy,cpu_spriteid,0,0);
+    cpu2=sprite_spawn_id(midx-1.0,midy+2.0,cpu_spriteid,0,0);
+    cpu3=sprite_spawn_id(midx+1.0,midy+2.0,cpu_spriteid,0,0);
   } else { // Starting left or right, hero goes on the top.
     hero=sprite_spawn_id(midx,midy-1.0,hero_spriteid,0,0);
     cpu=sprite_spawn_id(midx,midy+1.0,cpu_spriteid,0,0);
+    cpu2=sprite_spawn_id(midx+2.0,midy-1.0,cpu_spriteid,0,0);
+    cpu3=sprite_spawn_id(midx+2.0,midy+1.0,cpu_spriteid,0,0);
   }
   if (!hero||!cpu) return -1;
+  if (!cpu2||!cpu3) return -1;
   switch (orient) {
     case 0x40: break; // Natural orientation is Up for all vehicle sprites.
     case 0x10: hero->t=cpu->t=M_PI*-0.5; break;
     case 0x08: hero->t=cpu->t=M_PI*0.5; break;
     case 0x02: hero->t=cpu->t=M_PI; break;
   }
+  cpu2->t=cpu3->t=cpu->t;
+  cpu2->topspeed*=0.800;
+  cpu3->topspeed*=0.600;
   
   /* Prepare autopilot plan.
    */

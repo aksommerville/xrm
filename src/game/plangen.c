@@ -1,3 +1,6 @@
+/*XXX DO NOT USE. I'll do something stupider.
+ */
+
 #include "xrm.h"
 
 #define CAR_WITH_BUMPIES 12345
@@ -262,7 +265,14 @@ static int plangen_edgev_search(const struct plangen *ctx,const struct box *a) {
  * Caller must prepare (boxpath) with at least one box.
  */
  
+int complete_depth=0;
+ 
 static int plangen_complete_boxpath(struct boxpath *boxpath,struct plangen *ctx,const struct checkpoint *checkpoint) {
+
+  if (complete_depth>20) {
+    fprintf(stderr,"!!! %s reject due to complete_depth %d\n",__func__,complete_depth);
+    return -1;
+  }
 
   /* Ensure (boxpath) is not empty, and capture its last box.
    * If that start box overlaps (checkpoint), we're done.
@@ -276,6 +286,8 @@ static int plangen_complete_boxpath(struct boxpath *boxpath,struct plangen *ctx,
     (checkpoint->x<startbox->x+startbox->w)&&
     (checkpoint->y<startbox->y+startbox->h)
   ) return 0;
+  complete_depth++;
+  fprintf(stderr,"[%d] %s c0=%d...\n",complete_depth,__func__,c0);
   
   /* Visit each edge of (startbox) and recur to build out the whole path.
    * Important: Skip boxes already present in (boxpath). Otherwise we'd loop forever.
@@ -289,6 +301,7 @@ static int plangen_complete_boxpath(struct boxpath *boxpath,struct plangen *ctx,
     if (boxpath_has(boxpath,b)) continue;
     if (boxpath_append(boxpath,b)<0) return -1;
     if (plangen_complete_boxpath(boxpath,ctx,checkpoint)>=0) {
+      fprintf(stderr,"[%d] %d/%d completable via (%d,%d,%d,%d) c=%d\n",complete_depth,edgep,ctx->edgec,b->x,b->y,b->w,b->h,boxpath->c);
       if (!bestb||(boxpath->c<bestlen)) {
         bestb=b;
         bestlen=boxpath->c;
@@ -296,6 +309,7 @@ static int plangen_complete_boxpath(struct boxpath *boxpath,struct plangen *ctx,
     }
     boxpath->c=c0; // Back out this check, ready for the next.
   }
+  complete_depth--;
   if (!bestb) return -1; // Can't get there from here!
   
   /* There's a pretty good chance that the best path we found is still present in (boxpath->v).
@@ -327,6 +341,7 @@ static int plangen_find_boxpath(struct boxpath *boxpath,struct plangen *ctx,cons
     if (box->y+box->h<=a->y) continue;
     if (a->x+a->w<=box->x) continue;
     if (a->y+a->h<=box->y) continue;
+    fprintf(stderr,"%s: box(%d,%d,%d,%d) touches (a)\n",__func__,box->x,box->y,box->w,box->h);
     
     // (box) touches (a). Rebuild (tmp) from here to reach (b).
     tmp.c=0;
@@ -417,16 +432,24 @@ static int plangen_add_boxpath(struct plangen *ctx,struct boxpath *boxpath,struc
  */
  
 static int plangen_inner(struct plangen *ctx) {
+  fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
 
   /* Discover the boxes, seeding from the center of the first checkpoint.
    * Don't seed with the entire first checkpoint, because it might contain sidewalks.
    */
   struct checkpoint *cp=g.checkpointv;
   if (plangen_add_boxes(ctx,cp->x+(cp->w>>1),cp->y+(cp->h>>1),1,1)<0) return -1;
+  fprintf(stderr,"%s:%d boxc=%d\n",__FILE__,__LINE__,ctx->boxc);
+  {
+    struct box *box=ctx->boxv;
+    int i=ctx->boxc;
+    for (;i-->0;box++) fprintf(stderr,"  %d,%d,%d,%d\n",box->x,box->y,box->w,box->h);
+  }
   
   /* With the box list final, make a list of edges, ie pairs of overlapping boxes.
    */
   if (plangen_find_edges(ctx)<0) return -1;
+  fprintf(stderr,"%s:%d edgec=%d\n",__FILE__,__LINE__,ctx->edgec);
   
   /* XXX? Try with the first checkpoint as the first plan point.
    */
@@ -439,11 +462,13 @@ static int plangen_inner(struct plangen *ctx) {
     g.plana=na;
   }
   g.planv[g.planc++]=(struct plan){cp->x+cp->w*0.5,cp->y+cp->h*0.5};
+  fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
   
   /* For each adjacent pair of checkpoints, and the wraparound pair,
    * find a set of overlapping boxes that the first box touches the first checkpoint and the last the second.
    * We can add these checkpoint legs to the final path as we find them.
    */
+  //XXX Freezing here while loading chopper_tour! Also canals now too.
   struct box *firstbox=0,*lastbox=0;
   struct boxpath boxpath={0};
   int cpap=0;
@@ -452,12 +477,14 @@ static int plangen_inner(struct plangen *ctx) {
     if (cpbp>=g.checkpointc) cpbp=0;
     struct checkpoint *cpa=g.checkpointv+cpap;
     struct checkpoint *cpb=g.checkpointv+cpbp;
+    fprintf(stderr,"find boxpath for cp %d => %d\n",cpap,cpbp);
     boxpath.c=0;
     if (plangen_find_boxpath(&boxpath,ctx,cpa,cpb)<0) {
       fprintf(stderr,"!!! Failed to find box path from checkpoint %d to checkpoint %d\n",cpap,cpbp);
       boxpath_cleanup(&boxpath);
       return -2;
     }
+    fprintf(stderr,"...boxpath.c=%d\n",boxpath.c);
     if (plangen_add_boxpath(ctx,&boxpath,lastbox)<0) {
       boxpath_cleanup(&boxpath);
       return -1;
@@ -466,6 +493,7 @@ static int plangen_inner(struct plangen *ctx) {
     lastbox=boxpath.v[boxpath.c-1];
   }
   boxpath_cleanup(&boxpath);
+  fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
   
   /* The one point where the path begins has not been added, because we didn't have (lastbox) when we added the first boxpath.
    * That works out nicely, actually: We'd rather have this starting point at the very end, so autopilots can start at g.planv[0].
@@ -477,6 +505,7 @@ static int plangen_inner(struct plangen *ctx) {
   if (!firstbox||!lastbox) return -1;
   if (plangen_add_point(ctx,lastbox,firstbox)<0) return -1;
   
+  fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
   return 0;
 }
 

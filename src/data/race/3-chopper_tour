@@ -1,0 +1,5 @@
+herosprite sprite:herocopter
+cpusprite sprite:self_driving_chopper
+orient 0x08 0
+laps 3 0
+cpuc (u16)3

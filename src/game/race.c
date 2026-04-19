@@ -8,7 +8,6 @@
  */
  
 int race_begin(int raceid) {
-  fprintf(stderr,"%s(%d)\n",__func__,raceid);
   
   /* Eagerly clear global state.
    */
@@ -68,7 +67,6 @@ int race_begin(int raceid) {
   while (cmdlist_reader_next(&cmd,&reader)>0) {
     switch (cmd.opcode) {
       case CMD_map_checkpoint: { // Fill (checkpointv) sparsely; we'll validate after.
-          fprintf(stderr,"CHECKPOINT at %d,%d: %02x %02x %02x\n",cmd.arg[0],cmd.arg[1],cmd.arg[4],cmd.arg[5],cmd.arg[6]);
           int cpraceid=(cmd.arg[4]<<8)|cmd.arg[5];
           if (cpraceid!=raceid) break;
           int seq=cmd.arg[6];
@@ -102,15 +100,36 @@ int race_begin(int raceid) {
             ((g.mapro[p]>=0x35)&&(g.mapro[p]<=0x39))
           ) { // Water.
             g.map[p]=g.mapro[p]+5;
+          } else if ((g.mapro[p]>=0x0a)&&(g.mapro[p]<=0x0f)) { // Grass.
+            g.map[p]=0x5a;
           } else { // Assume sidewalk.
             g.map[p]=0x55;
           }
+        } break;
+      case CMD_map_path: { // Order matters.
+          int praceid=(cmd.arg[2]<<8)|cmd.arg[3];
+          if (praceid!=raceid) break;
+          double x=cmd.arg[0]+0.5;
+          double y=cmd.arg[1]+0.5;
+          if (g.planc>=g.plana) {
+            int na=g.plana+32;
+            if (na>INT_MAX/sizeof(struct plan)) return -1;
+            void *nv=realloc(g.planv,sizeof(struct plan)*na);
+            if (!nv) return -1;
+            g.planv=nv;
+            g.plana=na;
+          }
+          g.planv[g.planc++]=(struct plan){x,y};
         } break;
     }
   }
   
   /* Validate checkpoints.
    */
+  if (g.planc<2) {
+    fprintf(stderr,"Race %d needs at least two plan points.\n",raceid);
+    return -2;
+  }
   if (g.checkpointc<2) {
     fprintf(stderr,"Race %d needs at least two checkpoints.\n",raceid);
     return -1;
@@ -170,11 +189,12 @@ int race_begin(int raceid) {
   hero->t=t;
   
   /* Prepare autopilot plan.
-   */
+   *XXX Not doing this anymore. We've already got the plan, via map commands.
   if (vehicle_prepare_plan(hero->vehicle)<0) {
     fprintf(stderr,"vehicle_prepare_plan failed at race:%d, vehicle=%d\n",raceid,hero->vehicle);
     return -1;
   }
+  /**/
   
   return 0;
 }
@@ -229,7 +249,7 @@ void race_update(double elapsed) {
       /* TODO Ultimately, completing a race should first enter a cooldown period, then return to the menu or whatever, how they started it.
        * For now, run them all sequentially. You can set the first raceid in main.c:egg_client_init().
        */
-      if (g.raceid==1) race_begin(1);
+      if (g.raceid==3) race_begin(1);
       else race_begin(g.raceid+1);
     }
   }

@@ -15,6 +15,7 @@
 
 #define CMD_map_image      0x20 /* u16:imageid ; We ignore but editor uses. */
 #define CMD_map_block      0x40 /* u16:position u16:raceid ; Becomes impassable during the named race. */
+#define CMD_map_path       0x41 /* u16:position u16:raceid ; Order matters! Defines the autopilots' path. */
 #define CMD_map_checkpoint 0x60 /* u32:bounds u16:raceid u8:sequence u8:reserved ; Start at sequence zero. All for the raceid must be entered in order. */
 #define CMD_map_sprite     0x61 /* u16:position, u16:spriteid, u32:arg */
 

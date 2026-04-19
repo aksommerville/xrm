@@ -21,10 +21,10 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - - That might also give us a means of determining rank in real time.
 - - Grinding into walls isn't really a problem anymore, with the bump penalty removed.
 - - Line-tracking, vs point-tracking, is a huge win, totally works.
-- [ ] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
+- [x] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
 - - Redesign the world map altogether, now that we understand the rules better.
-- [ ] south_sea race is dreadfully boring. Will need some more twists n turns.
-- [ ] If we're going to let boats reach the map's edge, then the edges must participate in physics. But I think it's better to put a wall around the edge.
+- [x] south_sea race is dreadfully boring. Will need some more twists n turns.
+- [x] If we're going to let boats reach the map's edge, then the edges must participate in physics. But I think it's better to put a wall around the edge.
 - - For that matter, let's put a *thick* wall around the edge, so you never see the camera clamp.
 - [ ] Tune vehicle configs.
 - [x] Boat and chopper.

@@ -117,36 +117,47 @@ int race_begin(int raceid) {
   }
   
   /* Generate vehicles at the starting grid, ie checkpoint zero.
-   * TODO For now, assume there's always a hero vehicle and a cpu vehicle and make one of each.
+   * Produce them in pairs, with the human last.
    */
   cp=g.checkpointv;
   double midx=cp->x+cp->w*0.5;
   double midy=cp->y+cp->h*0.5;
-  struct sprite *hero=0,*cpu=0,*cpu2=0,*cpu3=0;
-  if (orient&0x42) { // Starting up or down, hero goes on the left.
-    hero=sprite_spawn_id(midx-1.0,midy,hero_spriteid,0,0);
-    cpu=sprite_spawn_id(midx+1.0,midy,cpu_spriteid,0,0);
-    cpu2=sprite_spawn_id(midx-1.0,midy+2.0,cpu_spriteid,0,0);
-    cpu3=sprite_spawn_id(midx+1.0,midy+2.0,cpu_spriteid,0,0);
-  } else { // Starting left or right, hero goes on the top.
-    hero=sprite_spawn_id(midx,midy-1.0,hero_spriteid,0,0);
-    cpu=sprite_spawn_id(midx,midy+1.0,cpu_spriteid,0,0);
-    cpu2=sprite_spawn_id(midx+2.0,midy-1.0,cpu_spriteid,0,0);
-    cpu3=sprite_spawn_id(midx+2.0,midy+1.0,cpu_spriteid,0,0);
-  }
-  if (!hero||!cpu) return -1;
-  if (!cpu2||!cpu3) return -1;
+  double ax=midx,ay=midy,bx=midx,by=midy;
+  if (orient&0x42) { ax-=1.0; bx+=1.0; }
+  else { ay-=1.0; by+=1.0; }
+  double speed_adjust=1.000; // All sprites get their topspeed attenuated slightly. More attenuation the further back we go.
+  const double speed_adjust_adjust=0.980;//XXX Instead of this, use a bunch of different CPU driver sprites with their own configs.
+  double t=0.0;
   switch (orient) {
     case 0x40: break; // Natural orientation is Up for all vehicle sprites.
-    case 0x10: hero->t=cpu->t=M_PI*-0.5; break;
-    case 0x08: hero->t=cpu->t=M_PI*0.5; break;
-    case 0x02: hero->t=cpu->t=M_PI; break;
+    case 0x10: t=M_PI*-0.5; break;
+    case 0x08: t=M_PI*0.5; break;
+    case 0x02: t=M_PI; break;
   }
-  /**/
-  cpu2->t=cpu3->t=cpu->t;
-  cpu2->topspeed*=0.800;
-  cpu3->topspeed*=0.600;
-  /**/
+  int cpu_racerc=5;
+  for (i=cpu_racerc;i-->0;) {
+    struct sprite *sprite;
+    double x,y;
+    if (i&1) { x=bx; y=by; }
+    else { x=ax; y=ay; }
+    if (!(sprite=sprite_spawn_id(x,y,cpu_spriteid,0,0))) return -1;
+    sprite->topspeed*=speed_adjust;
+    speed_adjust*=speed_adjust_adjust;
+    sprite->t=t;
+    if (i&1) switch (orient) {
+      case 0x40: midy+=2.0; ay+=2.0; by+=2.0; break;
+      case 0x10: midx+=2.0; ax+=2.0; bx+=2.0; break;
+      case 0x08: midx-=2.0; ax-=2.0; bx-=2.0; break;
+      case 0x02: midy-=2.0; ay-=2.0; by-=2.0; break;
+    }
+  }
+  // Then the hero.
+  double x,y;
+  if (cpu_racerc&1) { x=bx; y=by; }
+  else { x=midx; y=midy; }
+  struct sprite *hero=sprite_spawn_id(x,y,hero_spriteid,0,0);
+  if (!hero) return -1;
+  hero->t=t;
   
   /* Prepare autopilot plan.
    */

@@ -39,7 +39,7 @@ int vehicle_acquire_config(struct sprite *sprite) {
   SCALE(steer_rate,    2.000, 6.000)
   SCALE(accel_time,    1.000, 5.000)
   SCALE(brake_time,    0.250, 1.000)
-  SCALE(idle_stop_time,1.000, 8.000)
+  SCALE(idle_stop_time,1.000, 2.000)
   // bump_penalty remains normalized.
   #undef SCALE
   
@@ -215,6 +215,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   
   /* Detect and resolve collisions.
    */
+  const double max_reaction_velocity=50.0;
   uint32_t physicsmask=1<<NS_physics_solid;
   switch (sprite->vehicle) {
     case NS_vehicle_car: physicsmask|=1<<NS_physics_water; break;
@@ -233,7 +234,12 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
       double bshare=1.0-ashare;
       double oproj=(collision.other->vx*nx)+(collision.other->vy*ny);
       proj-=oproj;
-      proj*=1.500; // Bounce.
+      proj*=1.120; // Bounce.
+      if (proj<-max_reaction_velocity) {
+        proj=-max_reaction_velocity;
+      } else if (proj>max_reaction_velocity) {
+        proj=max_reaction_velocity;
+      }
       sprite->x+=collision.dx*1.100*ashare;
       sprite->y+=collision.dy*1.100*ashare;
       sprite->vx-=(proj*nx);/*/esclen;*/
@@ -253,4 +259,71 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   }
   
   vehicle_check_position(sprite,elapsed);
+}
+
+/* Distance to plan segment.
+ */
+ 
+double vehicle_distance_to_segment(const struct sprite *sprite,int planp) {
+  if (!sprite) return 0.0;
+  if (g.planc<2) return 0.0;
+  if ((planp<0)||(planp>=g.planc)) planp=0;
+  int bp=planp+1;
+  if (bp>=g.planc) bp=0;
+  double ax=g.planv[planp].x;
+  double ay=g.planv[planp].y;
+  double bx=g.planv[bp].x;
+  double by=g.planv[bp].y;
+  double cx=sprite->x;
+  double cy=sprite->y;
+  double len2=(bx-ax)*(bx-ax)+(by-ay)*(by-ay);
+  if (len2<0.5) { // Must be the same point; just compare to (b).
+    double dx=cx-bx;
+    double dy=cy-by;
+    return sqrt(dx*dx+dy*dy);
+  }
+  double len=sqrt(len2);
+  double cross=(bx-ax)*(cy-ay)-(cx-ax)*(by-ay);
+  double distance=cross/len;
+  if (distance<0.0) distance=-distance;
+  return distance;
+}
+
+/* Get segment points with wrapping and everything.
+ */
+
+void vehicle_get_segment(double *ax,double *ay,double *bx,double *by,int planp) {
+  if (g.planc<2) {
+    *ax=*bx=*ay=*by=0.0;
+    return;
+  }
+  if ((planp<0)||(planp>=g.planc)) planp=0;
+  *ax=g.planv[planp].x;
+  *ay=g.planv[planp].y;
+  if (++planp>=g.planc) planp=0;
+  *bx=g.planv[planp].x;
+  *by=g.planv[planp].y;
+}
+
+/* Get a line's angle and nudge relative to it.
+ */
+ 
+double vehicle_angle_toward_line(double ax,double ay,double bx,double by,double refx,double refy,double angle) {
+
+  /* Translate both remote points re (a).
+   * If (b) is too near (a), bail out. We should only get segments at least a meter apart, usually much more.
+   */
+  double dx=bx-ax;
+  double dy=by-ay;
+  double cx=refx-ax;
+  double cy=refy-ay;
+  if (dx*dx+dy*dy<1.0) return angle;
+  
+  // Angle of (b) is our True North.
+  double bt=atan2(dx,-dy);
+  
+  // Only thing we need (c) for is the sign of its crossproduct. That tells us whether to go clockwise or deasil.
+  double cross=dx*cy-cx*dy;
+  if (cross>0.0) return bt-angle;
+  return bt+angle;
 }

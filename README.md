@@ -13,9 +13,14 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [x] CPU driver.
 - [x] When cars bonk each and travelling the same direction, there can be a ridiculous amount of force. Tone it down.
 - [x] I think tone down the wall penalty.
-- [ ] CPU players are getting stuck sometimes, esp in south_sea. Can we add some kind of mitigation? Similar: Can we prevent them from grinding into walls?
+- [x] Observed a collision in boat that sent me into the wall. Just run straight, then at the first turn, go right a little to bonk the boat in front of you.
+- - Added a global limit on reaction velocities, still fast enough to wow the observer.
+- - I think this can only happen when touching a map edge. ...confirmed. But also, it can't happen anymore.
+- [x] CPU players are getting stuck sometimes, esp in south_sea. Can we add some kind of mitigation? Similar: Can we prevent them from grinding into walls?
 - - Try better comprehension of the line connecting plan points, rather than just "steer toward the next point".
 - - That might also give us a means of determining rank in real time.
+- - Grinding into walls isn't really a problem anymore, with the bump penalty removed.
+- - Line-tracking, vs point-tracking, is a huge win, totally works.
 - [ ] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
 - - Redesign the world map altogether, now that we understand the rules better.
 - [ ] south_sea race is dreadfully boring. Will need some more twists n turns.
@@ -29,12 +34,16 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [ ] Scorekeeping.
 - [ ] Show time, speed, etc in a overlay.
 - [ ] Big overlay with lap time, or the finish message.
+- [ ] I think the race is ending when *anybody* crosses the finish line, after *anybody* reaches the last lap. Get the overlays running first, so it's easier to tell.
 - [x] Count down to start race.
 - [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is.
 - [ ] Different appearance for CPU player.
 - [x] Move more vehicle config out to the sprite resource, and tune all the vehicles appropriately.
+- [ ] Show finish line.
 
 - Stretch goals.
+- [ ] Lots of slightly different CPU players, instead of naive changes to topspeed at spawn.
+- [ ] Decorative spectators.
 - [ ] Generalize count of CPU drivers in a race.
 - [ ] Show current rank. Not as simple as it sounds.
 - [ ] Boat: Animated motor.

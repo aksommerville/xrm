@@ -66,6 +66,21 @@ void camera_render() {
     }
   }
   
+  // XXX TEMP: Show the autopilots' plan.
+  if (0) {
+    if (g.planc>1) {
+      uint32_t linecolor=0xff0000ff;
+      graf_set_image(&g.graf,0);
+      graf_line_strip_begin(&g.graf,(int)(g.planv[0].x*NS_sys_tilesize)-g.camerax,(int)(g.planv[0].y*NS_sys_tilesize)-g.cameray,linecolor);
+      struct plan *plan=g.planv+1;
+      int i=g.planc-1;
+      for (;i-->0;plan++) {
+        graf_line_strip_more(&g.graf,(int)(plan->x*NS_sys_tilesize)-g.camerax,(int)(plan->y*NS_sys_tilesize)-g.cameray,linecolor);
+      }
+      graf_line_strip_more(&g.graf,(int)(g.planv[0].x*NS_sys_tilesize)-g.camerax,(int)(g.planv[0].y*NS_sys_tilesize)-g.cameray,linecolor);
+    }
+  }
+  
   // Sprites.
   sprites_render(g.camerax,g.cameray);
   

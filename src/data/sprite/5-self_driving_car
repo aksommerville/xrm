@@ -2,4 +2,4 @@ image image:sprites
 type (u16:sprtype)autopilot
 tile 0x00 0x00
 solid
-vehicle (u8:vehicle)car (u8:grip)180 (u8:topspeed)90 (u8:steer_rate)120 (u8:accel_time)210 (u8:brake_time)50 (u8:idle_stop_time)100 (u8:bump_penalty)150
+vehicle (u8:vehicle)car (u8:grip)240 (u8:topspeed)170 (u8:steer_rate)220 (u8:accel_time)70 (u8:brake_time)50 (u8:idle_stop_time)100 (u8:bump_penalty)150

@@ -147,4 +147,20 @@ int sprite_find_collision(
   uint32_t physicsmask
 );
 
+/* Scalar rejection, or distance to endpoint if we're beyond it.
+ * (planp) is the first point. We manage wrapping.
+ */
+double vehicle_distance_to_segment(const struct sprite *sprite,int planp);
+
+/* Start (a) and end (b) points of any segment.
+ */
+void vehicle_get_segment(double *ax,double *ay,double *bx,double *by,int planp);
+
+/* Returns an absolute angle in radians clockwise from noon,
+ * for a vehicle at (ref) driving along (a..b).
+ * (angle) zero is parallel and forward. (angle) PI/2 is toward the line, PI is reverse, -PI/2 is away, etc.
+ * Sane drivers want some angle between 0 and PI/2, preferably close to 0.
+ */
+double vehicle_angle_toward_line(double ax,double ay,double bx,double by,double refx,double refy,double angle);
+
 #endif

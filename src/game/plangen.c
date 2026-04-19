@@ -368,7 +368,7 @@ static int plangen_add_point(struct plangen *ctx,const struct box *a,const struc
    * But autopilots won't react until they're very close to the target point.
    * At this default, they'll be strongly inclined to overshoot and crash into the far wall.
    * So. If we can guess which side of (a) they're approaching from, bind to the edge of the intersection instead.
-   */
+   *XXX I think this won't be necessary, once I change from point-oriented to line-oriented navigation.
   #define CLOSE(aa,bb) ({ \
     int _close=0; \
     int _d=(aa)-(bb); \
@@ -381,6 +381,7 @@ static int plangen_add_point(struct plangen *ctx,const struct box *a,const struc
   else if ( CLOSE(at,bt)&&!CLOSE(ab,bb)) y=ub;
   else if (!CLOSE(at,bt)&& CLOSE(ab,bb)) y=ut;
   #undef CLOSE
+  /**/
   
   if (g.planc>=g.plana) {
     int na=g.plana+32;
@@ -426,6 +427,18 @@ static int plangen_inner(struct plangen *ctx) {
   /* With the box list final, make a list of edges, ie pairs of overlapping boxes.
    */
   if (plangen_find_edges(ctx)<0) return -1;
+  
+  /* XXX? Try with the first checkpoint as the first plan point.
+   */
+  if (g.planc>=g.plana) {
+    int na=g.plana+32;
+    if (na>INT_MAX/sizeof(struct plan)) return -1;
+    void *nv=realloc(g.planv,sizeof(struct plan)*na);
+    if (!nv) return -1;
+    g.planv=nv;
+    g.plana=na;
+  }
+  g.planv[g.planc++]=(struct plan){cp->x+cp->w*0.5,cp->y+cp->h*0.5};
   
   /* For each adjacent pair of checkpoints, and the wraparound pair,
    * find a set of overlapping boxes that the first box touches the first checkpoint and the last the second.

@@ -68,15 +68,18 @@ int race_begin(int raceid) {
   while (cmdlist_reader_next(&cmd,&reader)>0) {
     switch (cmd.opcode) {
       case CMD_map_checkpoint: { // Fill (checkpointv) sparsely; we'll validate after.
-          if (cmd.arg[4]!=raceid) break;
-          if (cmd.arg[5]>=CHECKPOINT_LIMIT) {
-            fprintf(stderr,"Invalid checkpoint id %d in race %d, at (%d,%d). Limit %d.\n",cmd.arg[5],raceid,cmd.arg[0],cmd.arg[1],CHECKPOINT_LIMIT);
+          fprintf(stderr,"CHECKPOINT at %d,%d: %02x %02x %02x\n",cmd.arg[0],cmd.arg[1],cmd.arg[4],cmd.arg[5],cmd.arg[6]);
+          int cpraceid=(cmd.arg[4]<<8)|cmd.arg[5];
+          if (cpraceid!=raceid) break;
+          int seq=cmd.arg[6];
+          if (seq>=CHECKPOINT_LIMIT) {
+            fprintf(stderr,"Invalid checkpoint id %d in race %d, at (%d,%d). Limit %d.\n",seq,raceid,cmd.arg[0],cmd.arg[1],CHECKPOINT_LIMIT);
             return -2;
           }
-          if (cmd.arg[5]>=g.checkpointc) g.checkpointc=cmd.arg[5]+1;
-          struct checkpoint *cp=g.checkpointv+cmd.arg[5];
+          if (seq>=g.checkpointc) g.checkpointc=seq+1;
+          struct checkpoint *cp=g.checkpointv+seq;
           if (cp->w||cp->h) {
-            fprintf(stderr,"Multiple checkpoint id %d in race %d (%d,%d) and (%d,%d)\n",cmd.arg[5],raceid,cmd.arg[0],cmd.arg[1],cp->x,cp->y);
+            fprintf(stderr,"Multiple checkpoint id %d in race %d (%d,%d) and (%d,%d)\n",seq,raceid,cmd.arg[0],cmd.arg[1],cp->x,cp->y);
             return -2;
           }
           cp->x=cmd.arg[0];
@@ -85,7 +88,8 @@ int race_begin(int raceid) {
           cp->h=cmd.arg[3];
         } break;
       case CMD_map_block: {
-          if (cmd.arg[2]!=raceid) break;
+          int braceid=(cmd.arg[2]<<8)|cmd.arg[3];
+          if (braceid!=raceid) break;
           int x=cmd.arg[0];
           int y=cmd.arg[1];
           if ((x>=g.mapw)||(y>=g.maph)) break; // oy!
@@ -225,7 +229,7 @@ void race_update(double elapsed) {
       /* TODO Ultimately, completing a race should first enter a cooldown period, then return to the menu or whatever, how they started it.
        * For now, run them all sequentially. You can set the first raceid in main.c:egg_client_init().
        */
-      if (g.raceid==3) race_begin(1);
+      if (g.raceid==1) race_begin(1);
       else race_begin(g.raceid+1);
     }
   }

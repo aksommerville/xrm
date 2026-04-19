@@ -188,14 +188,6 @@ int race_begin(int raceid) {
   if (!hero) return -1;
   hero->t=t;
   
-  /* Prepare autopilot plan.
-   *XXX Not doing this anymore. We've already got the plan, via map commands.
-  if (vehicle_prepare_plan(hero->vehicle)<0) {
-    fprintf(stderr,"vehicle_prepare_plan failed at race:%d, vehicle=%d\n",raceid,hero->vehicle);
-    return -1;
-  }
-  /**/
-  
   return 0;
 }
 
@@ -249,7 +241,7 @@ void race_update(double elapsed) {
       /* TODO Ultimately, completing a race should first enter a cooldown period, then return to the menu or whatever, how they started it.
        * For now, run them all sequentially. You can set the first raceid in main.c:egg_client_init().
        */
-      if (g.raceid==3) race_begin(1);
+      if (g.raceid==4) race_begin(1);
       else race_begin(g.raceid+1);
     }
   }

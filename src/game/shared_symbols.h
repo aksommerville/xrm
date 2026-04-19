@@ -31,6 +31,7 @@
 #define CMD_race_orient         0x21 /* u8:dir(0x40,0x10,0x08,0x02) u8:reserved ; direction cars should face at start */
 #define CMD_race_laps           0x22 /* u8:count u8:reserved */
 #define CMD_race_cpusprite      0x23 /* u16:spriteid */
+#define CMD_race_cpuc           0x24 /* u16:count */
 
 #define NS_tilesheet_physics 1
 #define NS_tilesheet_family 0

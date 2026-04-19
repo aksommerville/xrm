@@ -28,6 +28,8 @@ int race_begin(int raceid) {
   uint8_t orient=0x40;
   int hero_spriteid=RID_sprite_hero;
   int cpu_spriteid=RID_sprite_self_driving_car;
+  int cpu_racerc=0;
+  const int CPU_LIMIT=15;
   {
     const void *serial=0;
     int serialc=xrm_res_get(&serial,EGG_TID_race,raceid);
@@ -50,6 +52,10 @@ int race_begin(int raceid) {
           } break;
         case CMD_race_cpusprite: {
             cpu_spriteid=(cmd.arg[0]<<8)|cmd.arg[1];
+          } break;
+        case CMD_race_cpuc: {
+            cpu_racerc=(cmd.arg[0]<<8)|cmd.arg[1];
+            if (cpu_racerc>CPU_LIMIT) cpu_racerc=CPU_LIMIT; // 64k is clearly too many...
           } break;
       }
     }
@@ -134,17 +140,17 @@ int race_begin(int raceid) {
     case 0x08: t=M_PI*0.5; break;
     case 0x02: t=M_PI; break;
   }
-  int cpu_racerc=5;
-  for (i=cpu_racerc;i-->0;) {
+  int p=0;
+  for (i=cpu_racerc;i-->0;p++) {
     struct sprite *sprite;
     double x,y;
-    if (i&1) { x=bx; y=by; }
+    if (p&1) { x=bx; y=by; }
     else { x=ax; y=ay; }
     if (!(sprite=sprite_spawn_id(x,y,cpu_spriteid,0,0))) return -1;
     sprite->topspeed*=speed_adjust;
     speed_adjust*=speed_adjust_adjust;
     sprite->t=t;
-    if (i&1) switch (orient) {
+    if (p&1) switch (orient) {
       case 0x40: midy+=2.0; ay+=2.0; by+=2.0; break;
       case 0x10: midx+=2.0; ax+=2.0; bx+=2.0; break;
       case 0x08: midx-=2.0; ax-=2.0; bx-=2.0; break;

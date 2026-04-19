@@ -1,9 +1,17 @@
 #include "game/xrm.h"
 
+// If we don't travel so far (squared) in so long, take a closer look at the situation.
+#define SAFETY_INTERVAL   1.000
+#define SAFETY_DISTANCE_2 1.000
+
 struct sprite_autopilot {
   struct sprite hdr;
   double bladet; // For chopper.
   int planp;
+  
+  // Sample my effective travel every so often, and if we don't seem to be making progress, take measures.
+  double safetyclock;
+  double safetyx,safetyy;
 };
 
 #define SPRITE ((struct sprite_autopilot*)sprite)
@@ -19,6 +27,9 @@ static void _autopilot_del(struct sprite *sprite) {
  
 static int _autopilot_init(struct sprite *sprite) {
   vehicle_acquire_config(sprite);
+  SPRITE->safetyclock=SAFETY_INTERVAL;
+  SPRITE->safetyx=sprite->x;
+  SPRITE->safetyy=sprite->y;
   return 0;
 }
 
@@ -27,11 +38,41 @@ static int _autopilot_init(struct sprite *sprite) {
  
 static void _autopilot_update(struct sprite *sprite,double elapsed) {
 
+  // Animation.
   if (sprite->vehicle==NS_vehicle_chopper) {
     double dt=sprite->drive/sprite->topspeed;
     dt=dt*20.0+(1.0-dt)*4.0;
     SPRITE->bladet+=dt*elapsed;
     if (SPRITE->bladet>M_PI) SPRITE->bladet-=M_PI*2.0;
+  }
+  
+  // Countdown? Hold.
+  if (g.countdown>0.0) return;
+  
+  // At each cycle of my safetyclock, ensure we've travelled a sensible distance.
+  if ((SPRITE->safetyclock-=elapsed)<=0.0) {
+    SPRITE->safetyclock+=SAFETY_INTERVAL;
+    double dx=sprite->x-SPRITE->safetyx;
+    double dy=sprite->y-SPRITE->safetyy;
+    SPRITE->safetyx=sprite->x;
+    SPRITE->safetyy=sprite->y;
+    if (dx*dx+dy*dy>=SAFETY_DISTANCE_2) {
+      // We're moving, it's cool.
+    } else {
+      // We're stuck! Review the entire plan, and find the nearest line.
+      // If it happens to be the one we're looking at already, well that sucks, I don't know what else to do.
+      int bestp=0;
+      double bestdistance=999.0;
+      int planp=0;
+      for (;planp<g.planc;planp++) {
+        double distance=vehicle_distance_to_segment(sprite,planp);
+        if (distance<bestdistance) {
+          bestp=planp;
+          bestdistance=distance;
+        }
+      }
+      SPRITE->planp=bestp;
+    }
   }
   
   if (g.planc>0) {

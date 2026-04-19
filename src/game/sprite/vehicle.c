@@ -282,6 +282,18 @@ double vehicle_distance_to_segment(const struct sprite *sprite,int planp) {
     double dy=cy-by;
     return sqrt(dx*dx+dy*dy);
   }
+  // If our scalar projection is OOB, compare distance to the nearer endpoint.
+  double dot=((bx-ax)*(cx-ax)+(by-ay)*(cy-ay))/len2; // divide by square length to normalize.
+  if (dot<=0.0) {
+    double dx=cx-ax;
+    double dy=cy-ay;
+    return sqrt(dx*dx+dy*dy);
+  } else if (dot>=1.0) {
+    double dx=cx-bx;
+    double dy=cy-by;
+    return sqrt(dx*dx+dy*dy);
+  }
+  // Scalar in bounds, the usual, use the cross product.
   double len=sqrt(len2);
   double cross=(bx-ax)*(cy-ay)-(cx-ax)*(by-ay);
   double distance=cross/len;

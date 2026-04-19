@@ -142,9 +142,11 @@ int race_begin(int raceid) {
     case 0x08: hero->t=cpu->t=M_PI*0.5; break;
     case 0x02: hero->t=cpu->t=M_PI; break;
   }
+  /**/
   cpu2->t=cpu3->t=cpu->t;
   cpu2->topspeed*=0.800;
   cpu3->topspeed*=0.600;
+  /**/
   
   /* Prepare autopilot plan.
    */

@@ -11,12 +11,16 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - Important and urgent.
 - [x] Structured races.
 - [x] CPU driver.
-- [ ] When cars bonk each and travelling the same direction, there can be a ridiculous amount of force. Tone it down.
-- [ ] I think tone down the wall penalty.
+- [x] When cars bonk each and travelling the same direction, there can be a ridiculous amount of force. Tone it down.
+- [x] I think tone down the wall penalty.
 - [ ] CPU players are getting stuck sometimes, esp in south_sea. Can we add some kind of mitigation? Similar: Can we prevent them from grinding into walls?
+- - Try better comprehension of the line connecting plan points, rather than just "steer toward the next point".
+- - That might also give us a means of determining rank in real time.
 - [ ] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
 - - Redesign the world map altogether, now that we understand the rules better.
 - [ ] south_sea race is dreadfully boring. Will need some more twists n turns.
+- [ ] If we're going to let boats reach the map's edge, then the edges must participate in physics. But I think it's better to put a wall around the edge.
+- - For that matter, let's put a *thick* wall around the edge, so you never see the camera clamp.
 - [ ] Tune vehicle configs.
 - [x] Boat and chopper.
 - [x] Overpass and bridge. If it proves too hairy, we can do moveable bridges instead. Open when you pick the boat, close otherwise, easy. ...XXX too much trouble.
@@ -31,6 +35,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [x] Move more vehicle config out to the sprite resource, and tune all the vehicles appropriately.
 
 - Stretch goals.
+- [ ] Generalize count of CPU drivers in a race.
 - [ ] Show current rank. Not as simple as it sounds.
 - [ ] Boat: Animated motor.
 - [ ] Boat: visible wake. Maybe trailing long behind the sprite, so not part of the sprite itself.

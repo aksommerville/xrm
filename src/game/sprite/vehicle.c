@@ -128,7 +128,9 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   }
   
   /* For just a couple frames after releasing the gas, we artificially boost grip.
-   */
+   *XXX This was intended to supply a boost if you strobe the gas during a turn. (which is unrealistic but feels good)
+   * But in practice, you can strobe at any time and defeat traction. It's apparent in a boat or chopper.
+   * I think nix it.
   if (sprite->gas!=sprite->pvgas) {
     if (sprite->pvgas>0) sprite->gripbonus=1.0;
     sprite->pvgas=sprite->gas;
@@ -138,6 +140,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
     if (grip>1.0) grip=1.0;
     sprite->gripbonus-=elapsed*5.000;
   }
+  /**/
   
   /* Reduce inertia per grip.
    * If we reduce it all the way to zero, your tires are perfect, and the car goes exactly in the direction it's facing always.
@@ -222,28 +225,30 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   while (panic-->0) {
     if (sprite_find_collision(&collision,sprite,physicsmask)<=0) break;
     double esclen=sqrt(collision.dx*collision.dx+collision.dy*collision.dy);
-    double proj=((sprite->vx*collision.dx)+(sprite->vy*collision.dy))/esclen;
-    proj*=1.500;
-    sprite->drive=0.0;
+    double nx=collision.dx/esclen;
+    double ny=collision.dy/esclen;
+    double proj=(sprite->vx*nx)+(sprite->vy*ny);
     if (collision.other&&collision.other->vehicle) {
-      double ashare=0.500;//TODO Compare masses?
+      double ashare=0.500; // TODO Compare masses? ...I think we won't need to; all cars within a race should be the same thing.
       double bshare=1.0-ashare;
-      proj+=((collision.other->vx*collision.dx)+(collision.other->vy*collision.dy))/esclen;
+      double oproj=(collision.other->vx*nx)+(collision.other->vy*ny);
+      proj-=oproj;
+      proj*=1.500; // Bounce.
       sprite->x+=collision.dx*1.100*ashare;
       sprite->y+=collision.dy*1.100*ashare;
-      sprite->vx-=(proj*collision.dx)/esclen;
-      sprite->vy-=(proj*collision.dy)/esclen;
+      sprite->vx-=(proj*nx);/*/esclen;*/
+      sprite->vy-=(proj*ny);/*/esclen;*/
       collision.other->x-=collision.dx*1.100*bshare;
       collision.other->y-=collision.dy*1.100*bshare;
-      collision.other->vx+=(proj*collision.dx)/esclen;
-      collision.other->vy+=(proj*collision.dy)/esclen;
-      collision.other->drive=0.0;
+      collision.other->vx+=(proj*nx);/*/esclen;*/
+      collision.other->vy+=(proj*ny);/*/esclen;*/
       
     } else {
+      proj*=1.500; // Bounce.
       sprite->x+=collision.dx*1.100;
       sprite->y+=collision.dy*1.100;
-      sprite->vx-=(proj*collision.dx)/esclen;
-      sprite->vy-=(proj*collision.dy)/esclen;
+      sprite->vx-=(proj*nx);/*/esclen;*/
+      sprite->vy-=(proj*ny);/*/esclen;*/
     }
   }
   

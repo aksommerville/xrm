@@ -24,8 +24,8 @@
 #define CMD_sprite_type     0x22 /* u16:sprtype */
 #define CMD_sprite_layer    0x23 /* u16:layer */
 #define CMD_sprite_radius   0x24 /* u16:pixels */
-#define CMD_sprite_vehicle  0x25 /* u8:vehicle u8:TODO */
 #define CMD_sprite_color    0x40 /* u32:rgba */
+#define CMD_sprite_vehicle  0x60 /* (u8:vehicle)car u8:grip u8:topspeed u8:steer_rate u8:accel_time u8:brake_time u8:idle_stop_time u8:bump_penalty ; untagged ones are normal to some sane range */
 
 #define CMD_race_herosprite     0x20 /* u16:spriteid */
 #define CMD_race_orient         0x21 /* u8:dir(0x40,0x10,0x08,0x02) u8:reserved ; direction cars should face at start */

@@ -77,6 +77,14 @@ struct sprite *sprite_new(
   sprite->layer=100;
   sprite->radius=0.750;
   sprite->color=0x808080ff;
+  sprite->vehicle=0; // Not a vehicle initially. But the others will be set sensibly, so one can just toggle this field.
+  sprite->grip=0.500;
+  sprite->topspeed=0.500;
+  sprite->steer_rate=0.500;
+  sprite->accel_time=0.500;
+  sprite->brake_time=0.500;
+  sprite->idle_stop_time=0.500;
+  sprite->bump_penalty=0.500;
   
   if (sprite_apply_generic_commands(sprite,cmd,cmdc)<0) {
     sprite_del(sprite);

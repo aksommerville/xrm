@@ -12,21 +12,23 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [x] Structured races.
 - [x] CPU driver.
 - [ ] When cars bonk each and travelling the same direction, there can be a ridiculous amount of force. Tone it down.
+- [ ] I think tone down the wall penalty.
+- [ ] CPU players are getting stuck sometimes, esp in south_sea. Can we add some kind of mitigation? Similar: Can we prevent them from grinding into walls?
 - [ ] Even 5-meter streets feel pretty narrow. Drop some of the 3s and add some 7s.
 - - Redesign the world map altogether, now that we understand the rules better.
+- [ ] south_sea race is dreadfully boring. Will need some more twists n turns.
+- [ ] Tune vehicle configs.
 - [x] Boat and chopper.
 - [x] Overpass and bridge. If it proves too hairy, we can do moveable bridges instead. Open when you pick the boat, close otherwise, easy. ...XXX too much trouble.
 - [ ] Music.
 - [ ] Incidental sound effects.
 - [ ] Scorekeeping.
 - [ ] Show time, speed, etc in a overlay.
+- [ ] Big overlay with lap time, or the finish message.
 - [x] Count down to start race.
-- [ ] south_sea race is dreadfully boring. Will need some more twists n turns.
 - [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is.
 - [ ] Different appearance for CPU player.
-- [ ] Move more vehicle config out to the sprite resource, and tune all the vehicles appropriately.
-- [ ] I think tone down the wall penalty.
-- [ ] CPU players are getting stuck sometimes, esp in south_sea. Can we add some kind of mitigation? Similar: Can we prevent them from grinding into walls?
+- [x] Move more vehicle config out to the sprite resource, and tune all the vehicles appropriately.
 
 - Stretch goals.
 - [ ] Show current rank. Not as simple as it sounds.

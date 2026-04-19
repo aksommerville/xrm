@@ -38,11 +38,17 @@ struct sprite {
   
   // The model for moving vehicles is all here at the generic level, so in theory CPU-driven cars can share it.
   // Controller sets these:
+  int steer; // -1,0,1, current input state of dpad.
+  int gas; // -1,0,1 = brake,idle,gas. Input state.
+  // These should come from the resource, or controller may set at init. At vehicle_acquire_config(), they convert from norm to m/s or whatever.
   int vehicle; // Zero if not participating, or NS_vehicle_*. Constant.
   double grip; // 0..1, essentially "how grippy are your tires?". Do not adjust per floor conditions; that will be done generically.
   double topspeed; // m/s
-  int steer; // -1,0,1, current input state of dpad.
-  int gas; // -1,0,1 = brake,idle,gas. Input state.
+  double steer_rate;
+  double accel_time;
+  double brake_time;
+  double idle_stop_time;
+  double bump_penalty;
   // Used internally but might be interesting to read:
   double vx,vy; // m/s, actual velocity.
   int next_checkpoint;

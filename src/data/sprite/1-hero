@@ -2,4 +2,4 @@ image image:sprites
 type (u16:sprtype)hero
 tile 0x00 0x00
 solid
-vehicle (u8:vehicle)car 0
+vehicle (u8:vehicle)car (u8:grip)180 (u8:topspeed)100 (u8:steer_rate)120 (u8:accel_time)200 (u8:brake_time)50 (u8:idle_stop_time)100 (u8:bump_penalty)150

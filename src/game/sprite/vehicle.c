@@ -5,11 +5,10 @@
  
 int vehicle_acquire_config(struct sprite *sprite) {
 
-  //TODO
-  sprite->grip=0.750;
-  sprite->topspeed=25.0; // 30 feels good. 40 is maybe too fast.
-  if (sprite->type==&sprite_type_autopilot) sprite->topspeed=30.0;
-  
+  /* Pull config from the sprite's resource.
+   * sprite_new() sets some initial defaults, and type->init has a chance to set other defaults.
+   * But if the "vehicle" command is present, it overrides all of them. That should be so for all vehicle sprites.
+   */
   struct cmdlist_reader reader;
   if (sprite_reader_init(&reader,sprite->cmd,sprite->cmdc)<0) return -1;
   struct cmdlist_entry cmd;
@@ -17,9 +16,33 @@ int vehicle_acquire_config(struct sprite *sprite) {
     switch (cmd.opcode) {
       case CMD_sprite_vehicle: {
           sprite->vehicle=cmd.arg[0];
+          sprite->grip=cmd.arg[1]/255.0;
+          sprite->topspeed=cmd.arg[2]/255.0;
+          sprite->steer_rate=cmd.arg[3]/255.0;
+          sprite->accel_time=cmd.arg[4]/255.0;
+          sprite->brake_time=cmd.arg[5]/255.0;
+          sprite->idle_stop_time=cmd.arg[6]/255.0;
+          sprite->bump_penalty=cmd.arg[7]/255.0;
         } break;
     }
   }
+  
+  /* Take those normalized values and apply a sensible range, in place.
+   */
+  #define SCALE(fld,lo,hi) { \
+    if (sprite->fld<0.0) sprite->fld=0.0; \
+    else if (sprite->fld>1.0) sprite->fld=1.0; \
+    sprite->fld=(lo)*(1.0-sprite->fld)+(hi)*sprite->fld; \
+  }
+  // grip remains normalized.
+  SCALE(topspeed,     10.000,40.000)
+  SCALE(steer_rate,    2.000, 6.000)
+  SCALE(accel_time,    1.000, 5.000)
+  SCALE(brake_time,    0.250, 1.000)
+  SCALE(idle_stop_time,1.000, 8.000)
+  // bump_penalty remains normalized.
+  #undef SCALE
+  
   return 0;
 }
 
@@ -43,7 +66,7 @@ static void vehicle_check_position(struct sprite *sprite,double elapsed) {
         if (sprite->lapid) fprintf(stderr,"%p LAP %d TIME %.03f\n",sprite,sprite->lapid,g.racetime-sprite->lapstarttime);
         sprite->lapid++;
         fprintf(stderr,"%p BEGIN LAP %d\n",sprite,sprite->lapid);
-        //TODO Record and report lap time, and check for race completion.
+        //TODO Record and report lap time.
         sprite->lapstarttime=g.racetime;
       }
     }
@@ -64,17 +87,16 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
     return;
   }
 
-  //TODO Constants that might need extracted for config.
-  double steer_rate=4.000; // rad/s
+  double steer_rate=sprite->steer_rate; // rad/s
   double drive_min=5.0; // m/s. Minimum speed when gas applied. To jackrabbit up the starts.
-  double accel_time=2.000; // s, how long to reach (topspeed) from standstill.
-  double brake_time=0.500; // s, how long to reach standstill from (topspeed).
-  double idle_stop_time=2.0; // s. Idling is also a brake, but a much slower one.
+  double accel_time=sprite->accel_time; // s, how long to reach (topspeed) from standstill.
+  double brake_time=sprite->brake_time; // s, how long to reach standstill from (topspeed).
+  double idle_stop_time=sprite->idle_stop_time; // s. Idling is also a brake, but a much slower one.
   double grip_decel=30.0; // m/s**2. How much inertia to discard at perfect grip.
   double sync_rate_hi=100.0; // m/s**2. Maximum rate of acceleration or deceleration.
   double sync_rate_lo=  2.0; // ...according to (grip).
-  double bumpy_grip_penalty=0.500; // Grip multiplier.
-  double bumpy_speed_penalty=0.666; // Topspeed multiplier.
+  double bumpy_grip_penalty=sprite->bump_penalty*0.500; // Grip multiplier.
+  double bumpy_speed_penalty=sprite->bump_penalty; // Topspeed multiplier.
 
   /* Direction adjusts naively according to dpad.
    */

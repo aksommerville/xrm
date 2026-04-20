@@ -2,4 +2,4 @@ herosprite sprite:hero_boat
 cpusprite sprite:cpu_boat
 orient 0x10 0
 laps 2 0
-cpuc (u16)3
+cpuc (u16)5

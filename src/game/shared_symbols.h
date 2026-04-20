@@ -56,12 +56,14 @@
 // Should match everything after 'spriteid' in the CMD_map_sprite args.
 #define NS_sprtype_dummy 0 /* (u32)0 */
 #define NS_sprtype_hero 1
-#define NS_sprtype_civilian 2
+#define NS_sprtype_civilian 2 /* unused */
 #define NS_sprtype_autopilot 3
+#define NS_sprtype_finishline 4
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
   _(hero) \
   _(civilian) \
-  _(autopilot)
+  _(autopilot) \
+  _(finishline)
 
 #endif

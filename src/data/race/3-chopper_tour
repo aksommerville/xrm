@@ -2,4 +2,4 @@ herosprite sprite:hero_chopper
 cpusprite sprite:cpu_chopper
 orient 0x08 0
 laps 3 0
-cpuc (u16)3
+cpuc (u16)5

@@ -2,4 +2,4 @@ herosprite sprite:hero_car
 cpusprite sprite:speed_demon
 orient 0x08 0
 laps 5 0
-cpuc (u16)3
+cpuc (u16)5

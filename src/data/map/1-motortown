@@ -202,7 +202,7 @@
 image image:terrain
 checkpoint @134,85,6,6 race:lake_shore_drive 2 0
 checkpoint @164,94,6,6 race:lake_shore_drive 1 0
-checkpoint @115,119,6,6 race:lake_shore_drive 0 0
+checkpoint @133,119,6,6 race:lake_shore_drive 0 0
 block @113,102 race:lake_shore_drive
 block @123,91 race:lake_shore_drive
 block @125,91 race:lake_shore_drive
@@ -262,7 +262,7 @@ block @185,52 race:canals
 block @186,52 race:canals
 block @187,52 race:canals
 block @188,52 race:canals
-checkpoint @118,53,9,9 race:chopper_tour 0 0
+checkpoint @123,53,9,9 race:chopper_tour 0 0
 block @128,52 race:chopper_tour
 block @132,52 race:chopper_tour
 block @134,52 race:chopper_tour
@@ -359,31 +359,18 @@ block @95,51 race:chopper_tour
 block @97,51 race:chopper_tour
 block @99,51 race:chopper_tour
 block @101,51 race:chopper_tour
-block @103,51 race:chopper_tour
+block @111,51 race:chopper_tour
 block @116,36 race:chopper_tour
 block @79,71 race:chopper_tour
 block @79,69 race:chopper_tour
 block @79,67 race:chopper_tour
-block @79,65 race:chopper_tour
-block @79,63 race:chopper_tour
-block @81,63 race:chopper_tour
-block @85,63 race:chopper_tour
-block @87,63 race:chopper_tour
-block @89,63 race:chopper_tour
-block @91,63 race:chopper_tour
-block @93,63 race:chopper_tour
-block @95,63 race:chopper_tour
-block @97,63 race:chopper_tour
-block @99,63 race:chopper_tour
-block @101,63 race:chopper_tour
-block @103,63 race:chopper_tour
-block @105,63 race:chopper_tour
-block @111,63 race:chopper_tour
+block @107,63 race:chopper_tour
+block @109,63 race:chopper_tour
+block @113,63 race:chopper_tour
 block @116,40 race:chopper_tour
 block @116,42 race:chopper_tour
 block @116,38 race:chopper_tour
-block @108,63 race:chopper_tour
-block @83,63 race:chopper_tour
+block @111,63 race:chopper_tour
 block @70,87 race:chopper_tour
 block @72,104 race:chopper_tour
 block @75,111 race:chopper_tour
@@ -416,7 +403,7 @@ path @75,58 race:chopper_tour
 path @131,59 race:chopper_tour
 path @128,83 race:chopper_tour
 path @125,103 race:chopper_tour
-checkpoint @117,35,9,9 race:town_and_country 0 0
+checkpoint @123,35,9,9 race:town_and_country 0 0
 checkpoint @148,63,7,7 race:town_and_country 1 0
 checkpoint @84,104,7,7 race:town_and_country 2 0
 checkpoint @71,76,7,7 race:town_and_country 3 0
@@ -504,3 +491,8 @@ block @156,41 race:town_and_country
 block @156,39 race:town_and_country
 block @147,56 race:town_and_country
 block @147,54 race:town_and_country
+block @103,51 race:chopper_tour
+block @105,51 race:chopper_tour
+block @107,51 race:chopper_tour
+block @113,51 race:chopper_tour
+block @109,51 race:chopper_tour

@@ -15,10 +15,11 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [ ] Show time, speed, etc in a overlay.
 - [ ] Big overlay with lap time, or the finish message.
 - [ ] I think the race is ending when *anybody* crosses the finish line, after *anybody* reaches the last lap. Get the overlays running first, so it's easier to tell.
-- [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is.
-- [ ] Show finish line.
+- [x] Show finish line.
+- [ ] Race should continue until the humans finish, and then a brief denouement.
 
 - Stretch goals.
+- [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is. ...we're pretty ok here, call it a stretch goal.
 - [ ] Decorative spectators.
 - [ ] Show current rank. Not as simple as it sounds.
 - [ ] Boat: Animated motor.

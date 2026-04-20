@@ -10,6 +10,7 @@
 
 struct sprite;
 struct sprite_type;
+struct checkpoint;
 
 /* Sprites are drawn at 32 pixels and rendered at 24.
  * The map's tile size is 16, and that is our reference, "the meter".
@@ -123,6 +124,8 @@ FOR_EACH_SPRTYPE
 
 /* API for specific types.
  ********************************************************************/
+ 
+int sprite_finishline_setup(struct sprite *sprite,const struct checkpoint *checkpoint,uint8_t orient);
  
 /* Physics and motors.
  *********************************************************************/

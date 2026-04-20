@@ -145,18 +145,32 @@ int race_begin(int raceid) {
     // If we mess that up, it will be evident on the first test run, and won't start a fire or anything.
   }
   
+  /* Create the finishline sprite.
+   * Its natural orientation is vertical.
+   * Should be 8 pixels offset from the checkpoint's edge.
+   */
+  cp=g.checkpointv;
+  struct sprite *sprite=sprite_spawn(0.0,0.0,&sprite_type_finishline,0,0,0,0);
+  if (!sprite) return -1;
+  sprite_finishline_setup(sprite,cp,orient);
+  
   /* Generate vehicles at the starting grid, ie checkpoint zero.
    * Produce them in pairs, with the human last.
    */
-  cp=g.checkpointv;
   double midx=cp->x+cp->w*0.5;
   double midy=cp->y+cp->h*0.5;
+  switch (orient) { // Start cars *behind* the finish line, which is the *rear* end of the checkpoint.
+    case 0x40: midy+=cp->h*0.6; break;
+    case 0x10: midx+=cp->w*0.6; break;
+    case 0x08: midx-=cp->w*0.6; break;
+    case 0x02: midy-=cp->h*0.6; break;
+  }
   double ax=midx,ay=midy,bx=midx,by=midy;
   if (orient&0x42) { ax-=1.0; bx+=1.0; }
   else { ay-=1.0; by+=1.0; }
   double speed_adjust=1.000,accel_adjust=1.000; // All CPU sprites get their topspeed attenuated slightly. More attenuation the further back we go.
-  const double speed_adjust_adjust=0.960;
-  const double accel_adjust_adjust=1.100;
+  const double speed_adjust_adjust=0.900;
+  const double accel_adjust_adjust=1.250;
   double t=0.0;
   switch (orient) {
     case 0x40: break; // Natural orientation is Up for all vehicle sprites.

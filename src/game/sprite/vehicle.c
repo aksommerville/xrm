@@ -56,18 +56,25 @@ static void vehicle_check_position(struct sprite *sprite,double elapsed) {
   if ((qx!=sprite->qx)||(qy!=sprite->qy)) {
     sprite->qx=qx;
     sprite->qy=qy;
-    int cpid=race_check_checkpoint_at_point(qx,qy);
-    if ((cpid>=0)&&(cpid==sprite->next_checkpoint)) {
-      fprintf(stderr,"%p CHECKPOINT %d at %d,%d\n",sprite,cpid,qx,qy);
-      sprite->next_checkpoint++;
-      if (sprite->next_checkpoint>=g.checkpointc) {
-        sprite->next_checkpoint=0;
-      } else if (sprite->next_checkpoint==1) { // Just crossed the finish line.
-        if (sprite->lapid) fprintf(stderr,"%p LAP %d TIME %.03f\n",sprite,sprite->lapid,g.racetime-sprite->lapstarttime);
-        sprite->lapid++;
-        fprintf(stderr,"%p BEGIN LAP %d\n",sprite,sprite->lapid);
-        //TODO Record and report lap time.
-        sprite->lapstarttime=g.racetime;
+    if (!sprite->lapid) { // The start of everything. We're usually not actually on checkpoint zero at this moment, but pretend we are.
+      fprintf(stderr,"%p STARTING OUT %f\n",sprite,g.racetime);
+      sprite->next_checkpoint=1;
+      sprite->lapid=1;
+      sprite->lapstarttime=g.racetime;
+    } else {
+      int cpid=race_check_checkpoint_at_point(qx,qy);
+      if ((cpid>=0)&&(cpid==sprite->next_checkpoint)) {
+        fprintf(stderr,"%p CHECKPOINT %d at %d,%d\n",sprite,cpid,qx,qy);
+        sprite->next_checkpoint++;
+        if (sprite->next_checkpoint>=g.checkpointc) {
+          sprite->next_checkpoint=0;
+        } else if (sprite->next_checkpoint==1) { // Just crossed the finish line.
+          if (sprite->lapid) fprintf(stderr,"%p LAP %d TIME %.03f\n",sprite,sprite->lapid,g.racetime-sprite->lapstarttime);
+          sprite->lapid++;
+          fprintf(stderr,"%p BEGIN LAP %d\n",sprite,sprite->lapid);
+          //TODO Record and report lap time.
+          sprite->lapstarttime=g.racetime;
+        }
       }
     }
   }

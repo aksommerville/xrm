@@ -56,10 +56,9 @@ struct sprite {
   int lapid; // Initialize to zero and it should immediately bump to 1. One-based, for business purposes.
   double lapstarttime; // Sampled from (g.racetime).
   int qx,qy; // Quantized position.
+  int rank; // If nonzero, we've finished.
   // Vehicle internal use:
   double drive; // m/s target forward.
-  int pvgas;
-  double gripbonus;
 };
 
 /* Only sprites_update() should call sprite_del(), and only sprite_spawn() should call sprite_new().

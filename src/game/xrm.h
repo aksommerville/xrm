@@ -16,6 +16,7 @@
 
 #define CHECKPOINT_LIMIT 8
 #define COUNTDOWN_TIME 5.0 /* Reported time will round up; "1" is the last thing you see before starting. */
+#define COOLDOWN_TIME 3.0
 
 extern struct g {
   void *rom;
@@ -36,6 +37,8 @@ extern struct g {
   // camera.c
   int camerax,cameray; // Top-left, in map pixels.
   int framec;
+  int herospeed;
+  int herospeed_clock; // Timed in frames, because render doesn't get a true clock.
   
   // race.c
   int raceid;
@@ -43,9 +46,11 @@ extern struct g {
   int checkpointc;
   double racetime;
   double countdown; // >0 when the race is ready but not started yet.
+  double cooldown; // >0 when the race is over but still rendering and updating.
   int lapc;
   struct plan { double x,y; } *planv; // The path for autopilots. Initial position is at the end, start by targetting [0].
   int planc,plana;
+  int finishc; // How many cars have finished?
   
   struct sprite **spritev;
   int spritec,spritea;

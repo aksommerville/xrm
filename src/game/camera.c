@@ -41,6 +41,98 @@ void camera_update(double elapsed) {
   }
 }
 
+/* Render overlay, when race running.
+ */
+ 
+static void camera_render_race_overlay() {
+
+  /* Clock in the upper left.
+   */
+  {
+    int ms=(int)(g.racetime*1000.0);
+    int sec=ms/1000; ms%=1000;
+    int min=sec/60; sec%=60;
+    if (min>99) { // oh come on
+      min=sec=99;
+      ms=999;
+    }
+    int x=7;
+    int y=7;
+    graf_set_image(&g.graf,RID_image_fonttiles);
+    graf_tile(&g.graf,x,y,'0'+min/10,0); x+=8;
+    graf_tile(&g.graf,x,y,'0'+min%10,0); x+=8;
+    graf_tile(&g.graf,x,y,':',0); x+=8;
+    graf_tile(&g.graf,x,y,'0'+sec/10,0); x+=8;
+    graf_tile(&g.graf,x,y,'0'+sec%10,0); x+=8;
+    graf_tile(&g.graf,x,y,'.',0); x+=8;
+    graf_tile(&g.graf,x,y,'0'+ms/100,0); x+=8;
+    graf_tile(&g.graf,x,y,'0'+(ms/10)%10,0); x+=8;
+    graf_tile(&g.graf,x,y,'0'+ms%10,0);
+  }
+  
+  /* Find the hero sprite for the rest.
+   * For now we're not doing multiplayer, and there's no way yet to distinguish which player it is.
+   */
+  struct sprite *hero=0;
+  struct sprite **p=g.spritev;
+  int i=g.spritec;
+  for (;i-->0;p++) {
+    if ((*p)->type!=&sprite_type_hero) continue;
+    hero=*p;
+    break;
+  }
+  if (!hero) return;
+  
+  /* Speed in the upper right.
+   * The hero's car has a top speed around 75 km/h by the pedantic formula.
+   * Pretty wimpy for a race car, so let's double it. It's all just made-up numbers anyway.
+   * This number tends to fluctuate, so sample it at a slower rate.
+   */
+  {
+    if (--(g.herospeed_clock)<=0) {
+      g.herospeed_clock+=5; // 12 hz or so
+      double scale=3600.0/1000.0; // Mathematically correct, if a "meter" was really a meter.
+      scale*=2.0; // Call them faster so it sounds more muscley.
+      double mps=sqrt(hero->vx*hero->vx+hero->vy*hero->vy);
+      double kmph=mps*scale;
+      g.herospeed=(int)kmph;
+      if (g.herospeed<0) g.herospeed=0;
+      else if (g.herospeed>999) g.herospeed=999;
+    }
+    int x=FBW-8;
+    int y=7;
+    graf_tile(&g.graf,x,y,'h',0); x-=8;
+    graf_tile(&g.graf,x,y,'/',0); x-=8;
+    graf_tile(&g.graf,x,y,'m',0); x-=8;
+    graf_tile(&g.graf,x,y,'k',0); x-=16;
+    graf_tile(&g.graf,x,y,'0'+g.herospeed%10,0); x-=8;
+    if (g.herospeed>=10) {
+      graf_tile(&g.graf,x,y,'0'+(g.herospeed/10)%10,0); x-=8;
+      if (g.herospeed>=100) {
+        graf_tile(&g.graf,x,y,'0'+g.herospeed/100,0);
+      }
+    }
+  }
+  
+  /* Lap indicator dead center.
+   * No race will have a double-digit lap count.
+   */
+  {
+    int p=hero->lapid;
+    if (p<=g.lapc) { // Disappear when finished.
+      if (p<1) p=1;
+      int y=7;
+      int x=(FBW>>1)-(4*7)+4;
+      graf_tile(&g.graf,x,y,'L',0); x+=8;
+      graf_tile(&g.graf,x,y,'a',0); x+=8;
+      graf_tile(&g.graf,x,y,'p',0); x+=16;
+      graf_tile(&g.graf,x,y,'0'+p,0); x+=8;
+      graf_tile(&g.graf,x,y,'/',0); x+=8;
+      graf_tile(&g.graf,x,y,'0'+g.lapc,0);
+    }
+  }
+}
+
 /* Render.
  */
  
@@ -84,7 +176,9 @@ void camera_render() {
   // Sprites.
   sprites_render(g.camerax,g.cameray);
   
-  //TODO Overlay? Clock, HP, score, ...?
+  /* When the race is on, show some vitals.
+   */
+  if (g.racetime>0.0) camera_render_race_overlay();
   
   /* Countdown, if running.
    */

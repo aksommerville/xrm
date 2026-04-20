@@ -51,20 +51,21 @@ int vehicle_acquire_config(struct sprite *sprite) {
  */
  
 static void vehicle_check_position(struct sprite *sprite,double elapsed) {
+  if (g.cooldown>0.0) { // Once the human finishes, we don't care about checkpoints or rank anymore.
+    return;
+  }
   int qx=(int)sprite->x;
   int qy=(int)sprite->y;
   if ((qx!=sprite->qx)||(qy!=sprite->qy)) {
     sprite->qx=qx;
     sprite->qy=qy;
     if (!sprite->lapid) { // The start of everything. We're usually not actually on checkpoint zero at this moment, but pretend we are.
-      fprintf(stderr,"%p STARTING OUT %f\n",sprite,g.racetime);
       sprite->next_checkpoint=1;
       sprite->lapid=1;
       sprite->lapstarttime=g.racetime;
     } else {
       int cpid=race_check_checkpoint_at_point(qx,qy);
       if ((cpid>=0)&&(cpid==sprite->next_checkpoint)) {
-        fprintf(stderr,"%p CHECKPOINT %d at %d,%d\n",sprite,cpid,qx,qy);
         sprite->next_checkpoint++;
         if (sprite->next_checkpoint>=g.checkpointc) {
           sprite->next_checkpoint=0;
@@ -88,6 +89,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
   /* No playing during the countdown.
    * TODO Maybe we do want to allow them to rev the engine or turn?
    * TODO Maybe a Mario Kart style boost if you start your engine at the right moment, and spin out if you hit it early?
+   * (cooldown) is different; we do allow play then. But sprite_hero nullifies its inputs during cooldown.
    */
   if (g.countdown>0.0) {
     vehicle_check_position(sprite,elapsed);
@@ -133,21 +135,6 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
       }
     }
   }
-  
-  /* For just a couple frames after releasing the gas, we artificially boost grip.
-   *XXX This was intended to supply a boost if you strobe the gas during a turn. (which is unrealistic but feels good)
-   * But in practice, you can strobe at any time and defeat traction. It's apparent in a boat or chopper.
-   * I think nix it.
-  if (sprite->gas!=sprite->pvgas) {
-    if (sprite->pvgas>0) sprite->gripbonus=1.0;
-    sprite->pvgas=sprite->gas;
-  }
-  if (sprite->gripbonus>0.0) {
-    grip+=sprite->gripbonus*1.000;
-    if (grip>1.0) grip=1.0;
-    sprite->gripbonus-=elapsed*5.000;
-  }
-  /**/
   
   /* Reduce inertia per grip.
    * If we reduce it all the way to zero, your tires are perfect, and the car goes exactly in the direction it's facing always.

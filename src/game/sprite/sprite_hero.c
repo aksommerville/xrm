@@ -32,6 +32,13 @@ static void _hero_update(struct sprite *sprite,double elapsed) {
     SPRITE->bladet+=dt*elapsed;
     if (SPRITE->bladet>M_PI) SPRITE->bladet-=M_PI*2.0;
   }
+  
+  if (g.cooldown>0.0) {
+    sprite->steer=0;
+    sprite->gas=0;
+    sprite_vehicle_update(sprite,elapsed);
+    return;
+  }
 
   switch (g.input&(EGG_BTN_LEFT|EGG_BTN_RIGHT)) {
     case EGG_BTN_LEFT: sprite->steer=-1; break;

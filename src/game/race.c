@@ -16,6 +16,7 @@ int race_begin(int raceid) {
   memset(g.checkpointv,0,sizeof(g.checkpointv)); // We're going to populate sparsely.
   g.racetime=0.0;
   g.countdown=COUNTDOWN_TIME;
+  g.cooldown=0.0;
   g.lapc=1;
   g.planc=0;
   sprites_defunct_all();
@@ -237,7 +238,16 @@ void race_update(double elapsed) {
     return;
   }
   
-  //TODO cooldown clock too?
+  /* If the cooldown is running, tick it, terminate at zero, and don't update anything else.
+   */
+  if (g.cooldown>0.0) {
+    if ((g.cooldown-=elapsed)<=0.0) {
+      //TODO I don't like hard-coding the map count here, and starting over is not correct either. Should have a "game over" modal.
+      if (g.raceid==4) race_begin(1);
+      else race_begin(g.raceid+1);
+    }
+    return;
+  }
   
   /* If the countdown is complete, the main clock is running.
    */
@@ -253,13 +263,14 @@ void race_update(double elapsed) {
     struct sprite *sprite=*spritep;
     if (sprite->defunct) continue;
     if (!sprite->vehicle) continue;
+    if (sprite->rank) continue; // He's already done.
     if (sprite->lapid>g.lapc) {
       fprintf(stderr,"!!! Race completed in %.03f s !!!\n",g.racetime);
-      /* TODO Ultimately, completing a race should first enter a cooldown period, then return to the menu or whatever, how they started it.
-       * For now, run them all sequentially. You can set the first raceid in main.c:egg_client_init().
-       */
-      if (g.raceid==4) race_begin(1);
-      else race_begin(g.raceid+1);
+      g.finishc++; // Increment first, so the rest is one-based.
+      sprite->rank=g.finishc;
+      if (sprite->type==&sprite_type_hero) {
+        g.cooldown=COOLDOWN_TIME;
+      }
     }
   }
 }

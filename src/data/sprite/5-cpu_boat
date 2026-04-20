@@ -1,0 +1,5 @@
+image image:sprites
+type (u16:sprtype)autopilot
+tile 0x40 0x00
+solid
+vehicle (u8:vehicle)boat (u8:grip)50 (u8:topspeed)130 (u8:steer_rate)150 (u8:accel_time)50 (u8:brake_time)80 (u8:idle_stop_time)150 (u8:bump_penalty)0

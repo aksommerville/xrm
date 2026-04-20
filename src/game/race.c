@@ -25,8 +25,8 @@ int race_begin(int raceid) {
    * And some things are transient, we only need them during race_begin().
    */
   uint8_t orient=0x40;
-  int hero_spriteid=RID_sprite_hero;
-  int cpu_spriteid=RID_sprite_self_driving_car;
+  int hero_spriteid=RID_sprite_hero_car;
+  int cpu_spriteid=RID_sprite_cpu_car;
   int cpu_racerc=0;
   const int CPU_LIMIT=15;
   {
@@ -154,8 +154,9 @@ int race_begin(int raceid) {
   double ax=midx,ay=midy,bx=midx,by=midy;
   if (orient&0x42) { ax-=1.0; bx+=1.0; }
   else { ay-=1.0; by+=1.0; }
-  double speed_adjust=1.000; // All sprites get their topspeed attenuated slightly. More attenuation the further back we go.
-  const double speed_adjust_adjust=0.980;//XXX Instead of this, use a bunch of different CPU driver sprites with their own configs.
+  double speed_adjust=1.000,accel_adjust=1.000; // All CPU sprites get their topspeed attenuated slightly. More attenuation the further back we go.
+  const double speed_adjust_adjust=0.960;
+  const double accel_adjust_adjust=1.100;
   double t=0.0;
   switch (orient) {
     case 0x40: break; // Natural orientation is Up for all vehicle sprites.
@@ -172,6 +173,8 @@ int race_begin(int raceid) {
     if (!(sprite=sprite_spawn_id(x,y,cpu_spriteid,0,0))) return -1;
     sprite->topspeed*=speed_adjust;
     speed_adjust*=speed_adjust_adjust;
+    sprite->accel_time*=accel_adjust;
+    accel_adjust*=accel_adjust_adjust;
     sprite->t=t;
     if (p&1) switch (orient) {
       case 0x40: midy+=2.0; ay+=2.0; by+=2.0; break;

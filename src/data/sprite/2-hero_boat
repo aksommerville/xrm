@@ -1,0 +1,5 @@
+image image:sprites
+type (u16:sprtype)hero
+tile 0x10 0x00
+solid
+vehicle (u8:vehicle)boat (u8:grip)50 (u8:topspeed)100 (u8:steer_rate)180 (u8:accel_time)100 (u8:brake_time)100 (u8:idle_stop_time)100 (u8:bump_penalty)0

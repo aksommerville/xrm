@@ -1,5 +1,0 @@
-image image:sprites
-type (u16:sprtype)hero
-tile 0x30 0x00
-solid
-vehicle (u8:vehicle)chopper (u8:grip)10 (u8:topspeed)70 (u8:steer_rate)150 (u8:accel_time)150 (u8:brake_time)250 (u8:idle_stop_time)200 (u8:bump_penalty)0

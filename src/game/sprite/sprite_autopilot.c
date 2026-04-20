@@ -30,15 +30,6 @@ static int _autopilot_init(struct sprite *sprite) {
   SPRITE->safetyclock=SAFETY_INTERVAL;
   SPRITE->safetyx=sprite->x;
   SPRITE->safetyy=sprite->y;
-  
-  /* Our tiles are made for color replacement.
-   * Make up a random color.
-   */
-  uint8_t r=0x40+(rand()&0x7f);
-  uint8_t g=0x40+(rand()&0x7f);
-  uint8_t b=0x40+(rand()&0x7f);
-  sprite->color=(r<<24)|(g<<16)|(b<<8)|0xff;
-  
   return 0;
 }
 

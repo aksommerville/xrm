@@ -4,6 +4,15 @@
  
 #include "xrm.h"
 
+static const uint32_t cpucolorv[]={
+  0xff0000ff,
+  0xff8000ff,
+  0xffff00ff,
+  0x00c040ff,
+  0x3080ffff,
+  0x708090ff,
+};
+
 /* Begin new race.
  */
  
@@ -179,6 +188,7 @@ int race_begin(int raceid) {
     case 0x08: t=M_PI*0.5; break;
     case 0x02: t=M_PI; break;
   }
+  int colorc=sizeof(cpucolorv)/sizeof(uint32_t);
   int p=0;
   for (i=cpu_racerc;i-->0;p++) {
     struct sprite *sprite;
@@ -186,6 +196,8 @@ int race_begin(int raceid) {
     if (p&1) { x=bx; y=by; }
     else { x=ax; y=ay; }
     if (!(sprite=sprite_spawn_id(x,y,cpu_spriteid,0,0))) return -1;
+    if (p>=colorc) sprite->color=cpucolorv[colorc-1];
+    else sprite->color=cpucolorv[p];
     sprite->topspeed*=speed_adjust;
     speed_adjust*=speed_adjust_adjust;
     sprite->accel_time*=accel_adjust;

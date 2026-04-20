@@ -17,7 +17,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [x] I think the race is ending when *anybody* crosses the finish line, after *anybody* reaches the last lap. Get the overlays running first, so it's easier to tell.
 - [x] Show finish line.
 - [x] Race should continue until the humans finish, and then a brief denouement.
-- [ ] Use constant colors for the CPU players. The first should always be red; red ones are the fastest.
+- [x] Use constant colors for the CPU players. The first should always be red; red ones are the fastest.
 
 - Stretch goals.
 - [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is. ...we're pretty ok here, call it a stretch goal.

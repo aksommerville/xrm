@@ -13,7 +13,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [ ] Incidental sound effects.
 - [ ] Scorekeeping.
 - [x] Show time, speed, etc in a overlay.
-- [ ] Big overlay with lap time, or the finish message.
+- [x] Big overlay with lap time, or the finish message.
 - [x] I think the race is ending when *anybody* crosses the finish line, after *anybody* reaches the last lap. Get the overlays running first, so it's easier to tell.
 - [x] Show finish line.
 - [x] Race should continue until the humans finish, and then a brief denouement.

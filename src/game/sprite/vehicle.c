@@ -46,6 +46,46 @@ int vehicle_acquire_config(struct sprite *sprite) {
   return 0;
 }
 
+/* Vehicle just completed a lap.
+ */
+ 
+static void vehicle_finish_lap(struct sprite *sprite) {
+  double laptime=g.racetime-sprite->lapstarttime;
+  sprite->lapstarttime=g.racetime;
+  sprite->lapid++;
+  
+  // We don't care about the cpu racers; their (lapid) is stepped, so we're done.
+  if (sprite->type!=&sprite_type_hero) return;
+  
+  //TODO Check high scores.
+  
+  // Report it.
+  int ms=(int)(laptime*1000.0);
+  if (ms<0) ms=0;
+  int sec=ms/1000; ms%=1000;
+  int min=sec/60; sec%=60;
+  if (min>99) { min=sec=99; ms=999; }
+  memcpy(g.laptext,"Lap time ",9);
+  g.laptextc=9;
+  if (min>=10) {
+    g.laptext[g.laptextc++]='0'+min/10;
+  }
+  if (min>=1) {
+    g.laptext[g.laptextc++]='0'+min%10;
+    g.laptext[g.laptextc++]=':';
+  }
+  if (min||(sec>=10)) {
+    g.laptext[g.laptextc++]='0'+sec/10;
+  }
+  g.laptext[g.laptextc++]='0'+sec%10;
+  g.laptext[g.laptextc++]='.';
+  g.laptext[g.laptextc++]='0'+ms/100;
+  g.laptext[g.laptextc++]='0'+(ms/10)%10;
+  g.laptext[g.laptextc++]='0'+ms%10;
+  g.laptext_clock=LAPTEXT_DUTY; // Skip the first off-cycle.
+  g.laptext_cycle=LAPTEXT_CYCLEC;
+}
+
 /* Check position.
  * Update checkpoints etc.
  */
@@ -70,11 +110,7 @@ static void vehicle_check_position(struct sprite *sprite,double elapsed) {
         if (sprite->next_checkpoint>=g.checkpointc) {
           sprite->next_checkpoint=0;
         } else if (sprite->next_checkpoint==1) { // Just crossed the finish line.
-          if (sprite->lapid) fprintf(stderr,"%p LAP %d TIME %.03f\n",sprite,sprite->lapid,g.racetime-sprite->lapstarttime);
-          sprite->lapid++;
-          fprintf(stderr,"%p BEGIN LAP %d\n",sprite,sprite->lapid);
-          //TODO Record and report lap time.
-          sprite->lapstarttime=g.racetime;
+          vehicle_finish_lap(sprite);
         }
       }
     }

@@ -28,6 +28,9 @@ int race_begin(int raceid) {
   g.cooldown=0.0;
   g.lapc=1;
   g.planc=0;
+  g.laptextc=0;
+  g.finishc=0;
+  g.player_rank=0;
   sprites_defunct_all();
   memcpy(g.map,g.mapro,g.mapw*g.maph);
   
@@ -277,11 +280,11 @@ void race_update(double elapsed) {
     if (!sprite->vehicle) continue;
     if (sprite->rank) continue; // He's already done.
     if (sprite->lapid>g.lapc) {
-      fprintf(stderr,"!!! Race completed in %.03f s !!!\n",g.racetime);
       g.finishc++; // Increment first, so the rest is one-based.
       sprite->rank=g.finishc;
       if (sprite->type==&sprite_type_hero) {
         g.cooldown=COOLDOWN_TIME;
+        g.player_rank=sprite->rank;
       }
     }
   }

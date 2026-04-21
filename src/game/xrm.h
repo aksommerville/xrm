@@ -17,6 +17,10 @@
 #define CHECKPOINT_LIMIT 8
 #define COUNTDOWN_TIME 5.0 /* Reported time will round up; "1" is the last thing you see before starting. */
 #define COOLDOWN_TIME 3.0
+#define LAPTEXT_LIMIT 24
+#define LAPTEXT_PERIOD 0.500
+#define LAPTEXT_DUTY   0.400
+#define LAPTEXT_CYCLEC 6
 
 extern struct g {
   void *rom;
@@ -39,6 +43,10 @@ extern struct g {
   int framec;
   int herospeed;
   int herospeed_clock; // Timed in frames, because render doesn't get a true clock.
+  char laptext[LAPTEXT_LIMIT];
+  int laptextc;
+  double laptext_clock;
+  int laptext_cycle; // counts down
   
   // race.c
   int raceid;
@@ -51,6 +59,7 @@ extern struct g {
   struct plan { double x,y; } *planv; // The path for autopilots. Initial position is at the end, start by targetting [0].
   int planc,plana;
   int finishc; // How many cars have finished?
+  int player_rank;
   
   struct sprite **spritev;
   int spritec,spritea;

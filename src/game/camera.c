@@ -25,6 +25,13 @@ static struct sprite *camera_find_focus() {
  
 void camera_update(double elapsed) {
 
+  if (g.laptextc) {
+    if ((g.laptext_clock-=elapsed)<=0.0) {
+      g.laptext_clock+=LAPTEXT_PERIOD;
+      if (--(g.laptext_cycle)<=0) g.laptextc=0;
+    }
+  }
+
   /* If we have a focus sprite (should always), center on it and then clamp to map edges.
    * The map is guaranteed to be at least as large as the framebuffer.
    */
@@ -179,6 +186,28 @@ void camera_render() {
   /* When the race is on, show some vitals.
    */
   if (g.racetime>0.0) camera_render_race_overlay();
+  
+  /* Blinking lap time after you complete one.
+   */
+  if (g.laptextc&&(g.laptext_clock<LAPTEXT_DUTY)) {
+    graf_set_image(&g.graf,RID_image_fonttiles);
+    int y=(FBH>>1)+NS_sys_tilesize*2;
+    int x=(FBW>>1)-(g.laptextc*4)+4;
+    const char *src=g.laptext;
+    int i=g.laptextc;
+    for (;i-->0;src++,x+=8) graf_tile(&g.graf,x,y,*src,0);
+  }
+  
+  /* After completion, show a big cup indicating your rank.
+   */
+  if (g.player_rank) {
+    int srcy=96;
+    int srcx=(g.player_rank<4)?((g.player_rank-1)*64):192;
+    int dstx=(FBW>>1)-32;
+    int dsty=(FBH>>2)-32;
+    graf_set_image(&g.graf,RID_image_chunks);
+    graf_decal(&g.graf,dstx,dsty,srcx,srcy,64,64);
+  }
   
   /* Countdown, if running.
    */

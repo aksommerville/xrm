@@ -364,13 +364,13 @@ block @116,36 race:chopper_tour
 block @79,71 race:chopper_tour
 block @79,69 race:chopper_tour
 block @79,67 race:chopper_tour
-block @107,63 race:chopper_tour
-block @109,63 race:chopper_tour
-block @113,63 race:chopper_tour
+block @97,72 race:chopper_tour
+block @99,72 race:chopper_tour
+block @95,72 race:chopper_tour
 block @116,40 race:chopper_tour
 block @116,42 race:chopper_tour
 block @116,38 race:chopper_tour
-block @111,63 race:chopper_tour
+block @113,72 race:chopper_tour
 block @70,87 race:chopper_tour
 block @72,104 race:chopper_tour
 block @75,111 race:chopper_tour
@@ -496,3 +496,9 @@ block @105,51 race:chopper_tour
 block @107,51 race:chopper_tour
 block @113,51 race:chopper_tour
 block @109,51 race:chopper_tour
+block @101,72 race:chopper_tour
+block @103,72 race:chopper_tour
+block @105,72 race:chopper_tour
+block @107,72 race:chopper_tour
+block @109,72 race:chopper_tour
+block @111,72 race:chopper_tour

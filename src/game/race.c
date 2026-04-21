@@ -250,6 +250,9 @@ void race_update(double elapsed) {
    */
   if (g.countdown>0.0) {
     g.countdown-=elapsed;
+    if (g.countdown<=0.0) {
+      egg_play_song(1,RID_song_go_go_go,1,1.0,0.0);
+    }
     return;
   }
   
@@ -283,6 +286,7 @@ void race_update(double elapsed) {
       g.finishc++; // Increment first, so the rest is one-based.
       sprite->rank=g.finishc;
       if (sprite->type==&sprite_type_hero) {
+        egg_play_song(1,RID_song_gotcha_cup,0,1.0,0.0);
         g.cooldown=COOLDOWN_TIME;
         g.player_rank=sprite->rank;
       }

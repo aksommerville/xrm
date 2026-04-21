@@ -9,7 +9,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 ## TODO
 
 - Important and urgent.
-- [ ] Music.
+- [x] Music.
 - [ ] Incidental sound effects.
 - [ ] Scorekeeping.
 

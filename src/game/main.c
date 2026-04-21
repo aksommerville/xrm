@@ -23,6 +23,8 @@ int egg_client_init() {
   if (xrm_res_init()<0) return -1;
 
   srand_auto();
+  
+  egg_play_song(2,RID_song_motors,1,0.333,0.0);
 
   //TODO
   if (race_begin(1)<0) return -1;

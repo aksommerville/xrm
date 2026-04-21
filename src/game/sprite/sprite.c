@@ -207,6 +207,13 @@ void sprites_defunct_all() {
   for (;i-->0;p++) (*p)->defunct=1;
 }
 
+void sprites_del_all() {
+  while (g.spritec>0) {
+    g.spritec--;
+    sprite_del(g.spritev[g.spritec]);
+  }
+}
+
 /* Type registry.
  */
  

@@ -14,7 +14,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [ ] Scorekeeping.
 
 - Stretch goals.
-- [ ] Motor and screech effects, maybe with synth events instead of sounds?
+- [x] Motor and screech effects, maybe with synth events instead of sounds?
 - [ ] Modals.
 - [ ] Boat: Animated motor.
 - [ ] Boat: visible wake. Maybe trailing long behind the sprite, so not part of the sprite itself.

@@ -3,6 +3,8 @@
 struct sprite_hero {
   struct sprite hdr;
   double bladet; // For chopper.
+  int pvwheel;
+  double soundclock;
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -11,6 +13,7 @@ struct sprite_hero {
  */
  
 static void _hero_del(struct sprite *sprite) {
+  egg_song_event_note_off(2,0,0x30);
 }
 
 /* Init.
@@ -25,6 +28,26 @@ static int _hero_init(struct sprite *sprite) {
  */
  
 static void _hero_update(struct sprite *sprite,double elapsed) {
+
+  /* Update motor sound.
+   * It is technically correct to use (drive) for this: int wheel=(sprite->drive*8191.0)/sprite->topspeed;
+   * But (drive) tends to max out and stay there.
+   * Using plain old velocity to trigger it feels more natural, and is actually useful to the player.
+   */
+  double velocity=sqrt(sprite->vx*sprite->vx+sprite->vy*sprite->vy);
+  int wheel=(velocity*8191.0)/sprite->topspeed;
+  if (wheel<0) wheel=0;
+  else if (wheel>8191) wheel=8191;
+  if (wheel!=SPRITE->pvwheel) {
+    SPRITE->pvwheel=wheel;
+    egg_song_event_wheel(2,0,wheel);
+  }
+  // Need to re-send Note On every so often; the synthesizer has a safety mechanism that drops stale notes.
+  if ((SPRITE->soundclock-=elapsed)<=0.0) {
+    SPRITE->soundclock+=5.0;
+    egg_song_event_note_off(2,0,0x30);
+    egg_song_event_note_on(2,0,0x30,0x40);
+  }
 
   if (sprite->vehicle==NS_vehicle_chopper) {
     double dt=sprite->drive/sprite->topspeed;

@@ -94,6 +94,7 @@ struct sprite *sprite_spawn_id(
 );
 
 void sprites_defunct_all();
+void sprites_del_all(); // Caller must be super certain there is no iteration in progress!
 
 /* Types.
  ***********************************************************************/

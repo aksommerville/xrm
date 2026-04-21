@@ -31,7 +31,7 @@ int race_begin(int raceid) {
   g.laptextc=0;
   g.finishc=0;
   g.player_rank=0;
-  sprites_defunct_all();
+  sprites_del_all();
   memcpy(g.map,g.mapro,g.mapw*g.maph);
   
   /* Get the race metadata resource and load it into globals.

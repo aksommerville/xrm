@@ -7,6 +7,8 @@
 struct sprite_autopilot {
   struct sprite hdr;
   double bladet; // For chopper.
+  double wakeclock;
+  
   int planp;
   
   // Sample my effective travel every so often, and if we don't seem to be making progress, take measures.
@@ -44,6 +46,19 @@ static void _autopilot_update(struct sprite *sprite,double elapsed) {
     dt=dt*20.0+(1.0-dt)*4.0;
     SPRITE->bladet+=dt*elapsed;
     if (SPRITE->bladet>M_PI) SPRITE->bladet-=M_PI*2.0;
+  }
+  
+  /* If we're a boat and moving, produce the wake.
+   */
+  double velocity=sqrt(sprite->vx*sprite->vx+sprite->vy*sprite->vy);
+  if (sprite->vehicle==NS_vehicle_boat) {
+    if (velocity>WAKE_VELOCITY_THRESHOLD) {
+      if ((SPRITE->wakeclock-=elapsed)<=0.0) {
+        SPRITE->wakeclock+=WAKE_PERIOD;
+        struct sprite *wake=sprite_spawn(sprite->x,sprite->y,&sprite_type_wake,0,0,0,0);
+        sprite_wake_setup(wake,sprite->t);
+      }
+    }
   }
   
   // Countdown? Hold.

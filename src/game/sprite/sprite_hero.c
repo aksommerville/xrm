@@ -9,7 +9,7 @@ struct sprite_hero {
   int pvwheel;
   double soundclock;
   double screechclock;
-  double pvt; // Last angle of effective motion, for screeching. NB: Effective motion, not (sprite->t).
+  double wakeclock;
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -67,7 +67,21 @@ static void _hero_update(struct sprite *sprite,double elapsed) {
       } else SPRITE->screechclock=0.0;
     } else SPRITE->screechclock=0.0;
   } else SPRITE->screechclock=0.0;
+  
+  /* If we're a boat and moving, produce the wake.
+   */
+  if (sprite->vehicle==NS_vehicle_boat) {
+    if (velocity>WAKE_VELOCITY_THRESHOLD) {
+      if ((SPRITE->wakeclock-=elapsed)<=0.0) {
+        SPRITE->wakeclock+=WAKE_PERIOD;
+        struct sprite *wake=sprite_spawn(sprite->x,sprite->y,&sprite_type_wake,0,0,0,0);
+        sprite_wake_setup(wake,sprite->t);
+      }
+    }
+  }
 
+  /* If we're a chopper, rotate the blades.
+   */
   if (sprite->vehicle==NS_vehicle_chopper) {
     double dt=sprite->drive/sprite->topspeed;
     dt=dt*20.0+(1.0-dt)*4.0;

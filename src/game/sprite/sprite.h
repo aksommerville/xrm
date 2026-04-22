@@ -125,7 +125,11 @@ FOR_EACH_SPRTYPE
 /* API for specific types.
  ********************************************************************/
  
+#define WAKE_PERIOD 0.050
+#define WAKE_VELOCITY_THRESHOLD 5.0
+ 
 int sprite_finishline_setup(struct sprite *sprite,const struct checkpoint *checkpoint,uint8_t orient);
+int sprite_wake_setup(struct sprite *sprite,double t);
  
 /* Physics and motors.
  *********************************************************************/

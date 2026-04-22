@@ -59,11 +59,13 @@
 #define NS_sprtype_civilian 2 /* unused */
 #define NS_sprtype_autopilot 3
 #define NS_sprtype_finishline 4
+#define NS_sprtype_wake 5
 #define FOR_EACH_SPRTYPE \
   _(dummy) \
   _(hero) \
   _(civilian) \
   _(autopilot) \
-  _(finishline)
+  _(finishline) \
+  _(wake)
 
 #endif

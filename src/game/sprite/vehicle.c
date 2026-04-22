@@ -73,6 +73,10 @@ static void vehicle_finish_lap(struct sprite *sprite) {
   // We don't care about the cpu racers; their (lapid) is stepped, so we're done.
   if (sprite->type!=&sprite_type_hero) return;
   
+  if ((g.best_lap_time<=0.0)||(laptime<g.best_lap_time)) {
+    g.best_lap_time=laptime;
+  }
+  
   //TODO Check high scores.
   
   // Report it.

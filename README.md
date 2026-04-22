@@ -12,7 +12,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - [x] Music.
 - [x] Incidental sound effects.
 - [x] Screeching tires, when effective velocity above some threshold, and move direction doesn't match face direction.
-- [ ] Scorekeeping.
+- [x] Scorekeeping.
 - [ ] Hello and Game Over modals.
 - [ ] Show final time prominently during denouement, next to the lap time. (it remains visible in the corner, but it needs more focus).
 - [ ] Experiment with making the CPU choppers a bit less inept. Maybe up their grip a little?

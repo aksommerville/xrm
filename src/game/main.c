@@ -24,10 +24,12 @@ int egg_client_init() {
 
   srand_auto();
   
+  // The motors song is always on. It only makes a sound where there's a hero.
   egg_play_song(2,RID_song_motors,1,0.333,0.0);
-
-  //TODO
-  if (race_begin(1)<0) return -1;
+  
+  score_load();
+  
+  hello_begin();
 
   return 0;
 }
@@ -38,9 +40,15 @@ int egg_client_init() {
 void egg_client_update(double elapsed) {
   g.pvinput=g.input;
   g.input=egg_input_get_one(0);
-  sprites_update(elapsed);
-  camera_update(elapsed);
-  race_update(elapsed);
+  switch (g.modal) {
+    case MODAL_HELLO: hello_update(elapsed); break;
+    case MODAL_GAMEOVER: gameover_update(elapsed); break;
+    default: {
+        sprites_update(elapsed);
+        camera_update(elapsed);
+        race_update(elapsed);
+      }
+  }
 }
 
 /* Render.
@@ -48,7 +56,11 @@ void egg_client_update(double elapsed) {
 
 void egg_client_render() {
   graf_reset(&g.graf);
-  camera_render();
+  switch (g.modal) {
+    case MODAL_HELLO: hello_render(); break;
+    case MODAL_GAMEOVER: gameover_render(); break;
+    default: camera_render(); break;
+  }
   graf_flush(&g.graf);
 }
 

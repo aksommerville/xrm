@@ -223,8 +223,12 @@ void camera_render() {
     } else {
       ms%=1000;
     }
+    // It's unexpected for a camera, but we are also responsible for the countdown's audible ticks.
+    if (sec!=g.countdown_pvframe) {
+      g.countdown_pvframe=sec;
+      sfx(RID_sound_countdown);
+    }
     graf_set_image(&g.graf,RID_image_chunks);
-    //void graf_decal_rotate(struct graf *graf,int dstx,int dsty,int srcx,int srcy,int w_and_h,double sint,double cost,double scale);
     double scale=0.250+(2.000*ms)/1000.0;
     int alpha=(ms*255)/1000;
     if (alpha>0xff) alpha=0xff; else if (alpha<1) alpha=1;

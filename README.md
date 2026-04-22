@@ -10,12 +10,19 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 
 - Important and urgent.
 - [x] Music.
-- [ ] Incidental sound effects.
+- [x] Incidental sound effects.
+- [ ] Screeching tires, when effective velocity above some threshold, and move direction doesn't match face direction.
 - [ ] Scorekeeping.
+- [ ] Hello and Game Over modals.
+- [ ] Show final time prominently during denouement, next to the lap time. (it remains visible in the corner, but it needs more focus).
+
+- Wrap-up tasks, no later than Saturday.
+- [ ] Cover pic.
+- [ ] Itch page.
+- [ ] Review metadata.
 
 - Stretch goals.
 - [x] Motor and screech effects, maybe with synth events instead of sounds?
-- [ ] Modals.
 - [ ] Boat: Animated motor.
 - [ ] Boat: visible wake. Maybe trailing long behind the sprite, so not part of the sprite itself.
 - [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is. ...we're pretty ok here, call it a stretch goal.

@@ -47,6 +47,7 @@ extern struct g {
   int laptextc;
   double laptext_clock;
   int laptext_cycle; // counts down
+  int countdown_pvframe;
   
   // race.c
   int raceid;
@@ -64,6 +65,10 @@ extern struct g {
   struct sprite **spritev;
   int spritec,spritea;
   
+  // main.c; for regulating sound effects:
+  int bonkrid;
+  double bonktime;
+  
 } g;
 
 // xrm_res.c
@@ -79,5 +84,11 @@ void camera_render(); // Overwrites entire framebuffer.
 int race_begin(int raceid);
 int race_check_checkpoint_at_point(int x,int y); // => index in (g.checkpointv), or <0
 void race_update(double elapsed);
+
+/* Magnitude for bonksfx() is in m/s, because that's what's readily available after collision detection.
+ * I know, I know, it's really supposed to be gm/s**2. But we're not physicists here :)
+ */
+void sfx(int rid);
+void bonksfx(double velocity);
 
 #endif

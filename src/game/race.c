@@ -31,6 +31,7 @@ int race_begin(int raceid) {
   g.laptextc=0;
   g.finishc=0;
   g.player_rank=0;
+  g.countdown_pvframe=0;
   sprites_del_all();
   memcpy(g.map,g.mapro,g.mapw*g.maph);
   
@@ -251,7 +252,7 @@ void race_update(double elapsed) {
   if (g.countdown>0.0) {
     g.countdown-=elapsed;
     if (g.countdown<=0.0) {
-      egg_play_song(1,RID_song_go_go_go,1,1.0,0.0);
+      egg_play_song(1,RID_song_go_go_go,1,0.500,0.0);
     }
     return;
   }
@@ -286,7 +287,7 @@ void race_update(double elapsed) {
       g.finishc++; // Increment first, so the rest is one-based.
       sprite->rank=g.finishc;
       if (sprite->type==&sprite_type_hero) {
-        egg_play_song(1,RID_song_gotcha_cup,0,1.0,0.0);
+        egg_play_song(1,RID_song_gotcha_cup,0,0.500,0.0);
         g.cooldown=COOLDOWN_TIME;
         g.player_rank=sprite->rank;
       }

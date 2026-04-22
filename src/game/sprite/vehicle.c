@@ -1,5 +1,21 @@
 #include "game/xrm.h"
 
+/* Consider starting a sound effect.
+ * We only play bonk sounds for the hero.
+ * Sprite (b) may be null, if (a) is colliding against a wall.
+ */
+ 
+static void maybe_bonk(double velocity,struct sprite *a,struct sprite *b) {
+  //fprintf(stderr,"%s %.03f %s\n",__func__,velocity,b?"car-on-car":"car-on-wall");
+  if (velocity<0.0) velocity=-velocity;
+  if (
+    (a->type==&sprite_type_hero)||
+    (b&&(b->type==&sprite_type_hero))
+  ) {
+    bonksfx(velocity);
+  }
+}
+
 /* Configure sprite.
  */
  
@@ -270,6 +286,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
       } else if (proj>max_reaction_velocity) {
         proj=max_reaction_velocity;
       }
+      maybe_bonk(proj,sprite,collision.other);
       sprite->x+=collision.dx*1.100*ashare;
       sprite->y+=collision.dy*1.100*ashare;
       sprite->vx-=(proj*nx);/*/esclen;*/
@@ -281,6 +298,7 @@ void sprite_vehicle_update(struct sprite *sprite,double elapsed) {
       
     } else {
       proj*=1.500; // Bounce.
+      maybe_bonk(proj,sprite,0);
       sprite->x+=collision.dx*1.100;
       sprite->y+=collision.dy*1.100;
       sprite->vx-=(proj*nx);/*/esclen;*/

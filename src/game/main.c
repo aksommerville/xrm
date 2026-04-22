@@ -51,3 +51,32 @@ void egg_client_render() {
   camera_render();
   graf_flush(&g.graf);
 }
+
+/* Sound effects.
+ */
+ 
+void sfx(int rid) {
+  egg_play_sound(rid,1.0,0.0);
+}
+
+void bonksfx(double velocity) {
+  int rid;
+  // Important that the "bonk" sounds be ordered by their apparent order. (RID_sound_bonk2>RID_sound_bonk1).
+       if (velocity>= 25.000) rid=RID_sound_bonk4;
+  else if (velocity>= 15.000) rid=RID_sound_bonk3;
+  else if (velocity>=  8.000) rid=RID_sound_bonk2;
+  else if (velocity>=  2.000) rid=RID_sound_bonk1;
+  else return;
+  double now=egg_time_real();
+  double elapsed=now-g.bonktime;
+  //fprintf(stderr,"%s velocity=%.03f elapsed=%.03f rid=%d\n",__func__,velocity,elapsed,rid);
+  if (elapsed>=0.100) {
+    // Previous bonk was far enough back that anything goes.
+  } else if (rid<=g.bonkrid) {
+    // Within the overlap threshold, only make a sound if it's more significant than the prior.
+    return;
+  }
+  g.bonkrid=rid;
+  g.bonktime=now;
+  egg_play_sound(rid,1.0,0.0);
+}

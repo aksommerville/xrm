@@ -1,10 +1,15 @@
 #include "game/xrm.h"
 
+#define SCREECH_VELOCITY_THRESHOLD 8.0
+#define SCREECH_PERIOD 0.100
+
 struct sprite_hero {
   struct sprite hdr;
   double bladet; // For chopper.
   int pvwheel;
   double soundclock;
+  double screechclock;
+  double pvt; // Last angle of effective motion, for screeching. NB: Effective motion, not (sprite->t).
 };
 
 #define SPRITE ((struct sprite_hero*)sprite)
@@ -48,6 +53,20 @@ static void _hero_update(struct sprite *sprite,double elapsed) {
     egg_song_event_note_off(2,0,0x30);
     egg_song_event_note_on(2,0,0x30,0x40);
   }
+  
+  /* Screeching tires sound.
+   * Play a wee chirp repeatedly, when steering and moving fast enough.
+   * Tried a few things examining effective angle, but honestly, it feels better when it's just all steering.
+   * This is only in play for cars. Choppers definitely don't screech, and boats are debatable but I say no.
+   */
+  if ((sprite->vehicle==NS_vehicle_car)&&sprite->steer) {
+    if (velocity>SCREECH_VELOCITY_THRESHOLD) {
+      if ((SPRITE->screechclock-=elapsed)<=0.0) {
+        SPRITE->screechclock+=SCREECH_PERIOD;
+        sfx(RID_sound_screech);
+      } else SPRITE->screechclock=0.0;
+    } else SPRITE->screechclock=0.0;
+  } else SPRITE->screechclock=0.0;
 
   if (sprite->vehicle==NS_vehicle_chopper) {
     double dt=sprite->drive/sprite->topspeed;

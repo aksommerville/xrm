@@ -11,7 +11,7 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 - Important and urgent.
 - [x] Music.
 - [x] Incidental sound effects.
-- [ ] Screeching tires, when effective velocity above some threshold, and move direction doesn't match face direction.
+- [x] Screeching tires, when effective velocity above some threshold, and move direction doesn't match face direction.
 - [ ] Scorekeeping.
 - [ ] Hello and Game Over modals.
 - [ ] Show final time prominently during denouement, next to the lap time. (it remains visible in the corner, but it needs more focus).

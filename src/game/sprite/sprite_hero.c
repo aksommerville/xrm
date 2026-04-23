@@ -26,6 +26,7 @@ static void _hero_del(struct sprite *sprite) {
  
 static int _hero_init(struct sprite *sprite) {
   vehicle_acquire_config(sprite);
+  egg_song_event_wheel(2,0,0);
   return 0;
 }
 

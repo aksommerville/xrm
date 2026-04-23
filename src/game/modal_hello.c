@@ -1,7 +1,5 @@
 #include "xrm.h"
 
-//TODO
-
 /* Begin.
  */
  
@@ -19,7 +17,7 @@ static void hello_activate() {
   g.modal=0;
   g.overall_time=0.0;
   g.overall_rank=0;
-  race_begin(1);
+  race_begin(3);//XXX
   race_update(0.016); // When changing modes, the new mode would miss its first update.
 }
 
@@ -35,4 +33,9 @@ void hello_update(double elapsed) {
  
 void hello_render() {
   graf_fill_rect(&g.graf,0,0,FBW,FBH,0x000000ff);
+  int srcx=0,srcy=160,w=256,h=96;
+  int dstx=(FBW>>1)-(w>>1);
+  int dsty=(FBH>>1)-(h>>1);
+  graf_set_image(&g.graf,RID_image_chunks);
+  graf_decal(&g.graf,dstx,dsty,srcx,srcy,w,h);
 }

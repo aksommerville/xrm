@@ -19,7 +19,7 @@ struct sprite_finishline {
 
 static int _finishline_init(struct sprite *sprite) {
   sprite->layer=10;
-  sprite->tileid=0x60;
+  sprite->tileid=0x70;
   return 0;
 }
 

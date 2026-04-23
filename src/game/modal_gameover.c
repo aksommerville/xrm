@@ -40,8 +40,10 @@ static void gameover_add_row_text(int y,const char *label,int labelc,const char 
    * So we can generically decide where to put stars.
    */
   if (labelc) { // Don't put a star in the labels row!
-    if ((nowc<bestc)||((nowc==bestc)&&(memcmp(now,best,nowc)<=0))) {
-      gameover.vtxv[gameover.vtxc++]=(struct egg_render_tile){206,y,0x80,0};
+    if ((nowc>2)||(bestc>2)) { // Don't star ranks either; they'll tend to tie every time, and we do star ties.
+      if ((nowc<bestc)||((nowc==bestc)&&(memcmp(now,best,nowc)<=0))) {
+        gameover.vtxv[gameover.vtxc++]=(struct egg_render_tile){206,y,0x80,0};
+      }
     }
   }
 }

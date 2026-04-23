@@ -17,7 +17,7 @@ static void hello_activate() {
   g.modal=0;
   g.overall_time=0.0;
   g.overall_rank=0;
-  race_begin(3);//XXX
+  race_begin(1);
   race_update(0.016); // When changing modes, the new mode would miss its first update.
 }
 

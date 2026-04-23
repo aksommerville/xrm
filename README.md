@@ -9,9 +9,10 @@ Orthographic racing, hopefully along the lines of SNES Micro Machines.
 ## TODO
 
 - Wrap-up tasks, no later than Saturday.
-- [ ] Cover pic.
-- [ ] Itch page.
-- [ ] Review metadata.
+- [x] Cover pic.
+- [x] Itch page.
+- [x] Review metadata.
+- [x] Submit to jam.
 
 - Stretch goals.
 - [ ] Need a lot more variety of architecture, not just for aesthetics, but so the player can remember where he is. ...we're pretty ok here, call it a stretch goal.
